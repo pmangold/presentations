@@ -1,0 +1,390 @@
+\documentclass[aspectratio=169,14pt]{beamer}
+
+\usepackage{hyperref}
+\usepackage{biblatex}
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\addbibresource{references.bib}
+
+\usepackage{varwidth}
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+
+\include{src/usercommands}
+\include{src/letters}
+
+\definecolor{darkspringgreen}{rgb}{0.09, 0.45, 0.27}
+\makeatletter
+\newcommand{\Pause}[1][]{\unless\ifmeasuring@\relax
+\pause[#1]%
+\fi}
+\makeatother
+%%%%%% Template things
+
+% space between paragraphs
+\parskip=1em
+
+% title font
+\setbeamerfont{title}{size=\LARGE}%, series=\bfseries}
+\setbeamerfont{frametitle}{size=\LARGE}%, series=\bfseries}
+\setbeamerfont{institute}{size=\normalsize}%, series=\bfseries}
+
+% spacing between frame title and content
+\addtobeamertemplate{frametitle}{\vspace*{0.2cm}}{\vspace*{0.5cm}}
+
+% color
+\definecolor{beamer@blendedblue}{rgb}{0.8, 0, 0.34}%{0.44, 0.16, 0.39}
+
+% no navigation
+\beamertemplatenavigationsymbolsempty
+
+% slide numbers
+\setbeamertemplate{footline}
+{
+  \hbox{\begin{beamercolorbox}[wd=1\paperwidth,ht=5.25ex,dp=4ex,right]{framenumber}%
+      \large \insertframenumber{}~~
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% centered titles
+\makeatletter
+\long\def\beamer@@frametitle[#1]#2{%
+  \beamer@ifempty{#2}{}{%
+    \gdef\insertframetitle{\centering{#2\ifnum\beamer@autobreakcount>0\relax{}\space\usebeamertemplate*{frametitle continuation}\fi}}%
+  \gdef\beamer@frametitle{#2}%
+  \gdef\beamer@shortframetitle{#1}%
+}%
+}
+\makeatother
+
+%%%%% Equations
+
+\newcounter{mytn}
+\makeatletter
+\newcommand{\tmn}[3][]{\stepcounter{mytn}%
+\tikzmarknode[Col\the\numexpr\value{mytn}-\mytn@start\relax/.try,inner xsep=2pt,%
+minimum height=1.6em,inner sep=2mm,#1]{mytn-\number\value{mytn}}{#2}%
+\expandafter\gdef\csname tmn@annot@\number\value{mytn}\endcsname{#3}}
+\newenvironment{AnnotatedEquation}{\edef\mytn@start{\number\value{mytn}}%
+\begin{equation*}}{\end{equation*}%
+\edef\mytn@end{\number\value{mytn}}%
+\ifnum\mytn@end>\mytn@start
+\begin{itemize}
+ \foreach \X in {\the\numexpr\mytn@start+1,...,\mytn@end}
+ {\item \tikzmarknode{mytn-annot-\X}{\csname tmn@annot@\X\endcsname}%
+   \begin{tikzpicture}[overlay,remember picture]
+  \draw[-stealth] (mytn-annot-\X.east) to[out=0,in=-90] (mytn-\X.south);
+ \end{tikzpicture}}
+\end{itemize}
+\fi}
+\makeatother
+\tikzset{ Col1/.style= {fill=blue!20,anchor=base,rounded corners=2pt},
+Col2/.style= {Col1, fill=red!20},
+Col3/.style= {Col1, fill=green!20},
+Col4/.style= {Col1, fill=yellow!20},
+}
+
+%%%%% INFORMATION
+
+\title{Differential Privacy has Bounded Impact on Fairness}
+\author{
+  \vspace{-0.5em}
+  Paul Mangold\\[0.5em]
+  {\small (Joint work with Michaël Perrot, Aurélien Bellet and Marc Tommasi)}\\[1em]
+  CMAP, École Polytechnique
+  \\
+  \vspace{-1em}
+}
+\titlegraphic{
+}
+\institute{}
+\date{Journées MAS\\ August 28th, 2024}
+
+%%%%% DOCUMENT
+
+\begin{document}
+
+%% TITLE PAGE
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+\addtocounter{framenumber}{-1}
+
+\begin{frame}
+  \begin{minipage}{0.5\linewidth}
+    \only<1>{\includegraphics[width=\textwidth]{images/data.png}}
+    \only<2>{\includegraphics[width=\textwidth]{images/classifpb.png}}
+  \end{minipage}%
+  ~~~~~~
+  \begin{minipage}{0.4\linewidth}
+    \only<2>{
+      The resulting model:
+      \begin{itemize}
+      \item is (quite) accurate
+      \item contains info on data
+      \end{itemize}
+    }
+  \end{minipage}
+\end{frame}
+
+
+\begin{frame}{Privacy Issues?}
+  \begin{minipage}{0.4\linewidth}
+    Membership Inference:
+    \begin{center}
+      \textit{``determine whether a given
+      record was part of a model’s
+      training dataset''}
+    \end{center}
+  \end{minipage}%
+  ~~~~~~
+  \begin{minipage}{0.5\linewidth}
+    \only<1>{\includegraphics[width=\textwidth]{images/classifpb.png}}
+    \only<2>{\includegraphics[width=\textwidth]{images/classif-model2.png}}
+  \end{minipage}
+\end{frame}
+
+
+\begin{frame}[t]{Guaranteeing Privacy}
+  Perturb the predictor with a Gaussian noise $b$:
+  \only<1>{
+    \begin{align*}
+      h_{w}(x) = w_0 + w_1 \cdot x_1 + \cdots + w_p \cdot x_p
+    \end{align*}
+  }\only<2,3>{
+    \begin{align*}
+      h_{w+b}(x) = w_0 + \textcolor{purple}{b_0} + (w_1 + \textcolor{purple}{b_1}) \cdot x_1 + \cdots + (w_p + \textcolor{purple}{b_p}) \cdot x_p
+    \end{align*}
+  }
+  \only<3>{
+    \includegraphics[width=2em]{images/check.png}
+    noise gives plausible deniability $\rightarrow$ better privacy
+
+    \vspace{-1em}
+
+    \includegraphics[width=2em]{images/cross.png}
+    ~noisy predictions $\rightarrow$ lower accuracy
+}
+\end{frame}
+
+
+\begin{frame}{How Strong is the Protection?}
+  $\mathcal{A} : D \mapsto w$ is $(\epsilon, \delta)$-differentially private\footfullcite{dwork2006Differential}
+  \begin{align*}
+    \mathbb{P}(\mathcal{A}(D) \in \mathcal{S})
+    \le
+    \exp(\epsilon)
+    \mathbb{P}(\mathcal{A}(D') \in \mathcal{S})
+    + \delta
+  \end{align*}
+  for all datasets $D, D'$ that differ on one element, and any set $\mathcal{S}$
+
+  \vspace{1em}
+
+  Rule of thumb: $\epsilon \le 1$, $\delta = o(1/|D|)$
+\end{frame}
+
+\begin{frame}{How About Fairness?}
+  \begin{minipage}{0.5\linewidth}
+    \only<1>{\includegraphics[width=\textwidth]{images/classifpb.png}}
+    \only<2,5>{\includegraphics[width=\textwidth]{images/dataset-fairness.png}}
+    \only<3>{\includegraphics[width=\textwidth]{images/dataset-shirts.png}}
+    \only<4>{\includegraphics[width=\textwidth]{images/dataset-dress.png}}
+  \end{minipage}%
+  ~~~~~~
+  \begin{minipage}{0.4\linewidth}
+    Group Fairness:
+    \begin{center}
+      \textit{different groups can be treated differently}
+    \end{center}
+  \end{minipage}%
+
+  \vspace{-2em}
+
+  \only<5>{Note: perturbing the model can have disparate impact\footfullcite{bagdasaryan2019Differential}}
+
+  \vspace{1em}
+
+\end{frame}
+
+
+\begin{frame}{Modelling the Problem\\[-0.5em]
+  \large with a sensitive group $\mathcal{S}$}
+  \begin{minipage}{0.5\linewidth}
+    \includegraphics[width=\textwidth]{images/dataset-fairness.png}
+  \end{minipage}%
+  ~~~~~~
+  \begin{minipage}{0.4\linewidth}
+    Take: $\mathcal{X} \times \mathcal{S} \rightarrow \{0, 1\}$
+
+    \vspace{1em}
+
+    \textbf{Goal:} learn $h : \mathcal{X} \rightarrow \mathbb{R}$
+
+    \vspace{0.5em}
+
+    $\rightarrow$ classify $x \in \mathcal{X}$ as
+    
+    \vspace{-1.5em}
+
+    \begin{align*}
+      \hat{y} = \sign{h(x)}
+    \end{align*}
+  \end{minipage}%
+\end{frame}
+
+
+\begin{frame}{Measuring Group Fairness}
+  Example: Demographic Parity\footfullcite{calders2009Building}
+  \begin{align*}
+    F_k(h) =
+    \tikz[baseline,remember picture]{\node[fill=red!20,anchor=base]
+    (shirtprob){$\displaystyle \prob( h(X) > 0 | S = k)$};}
+    -
+    \tikz[baseline,remember picture]{\node[fill=red!20,anchor=base]
+    (baseprob){$\displaystyle \prob( h(X) > 0 ) $};}    
+%    \mathbb{P} (h(X) > 0 | S = k) -  \mathbb{P} (h(X) > 0)
+  \end{align*}
+  ~~~~~~~~~~~~~~~~~~~~~
+  \begin{minipage}{0.3\linewidth}
+    \includegraphics[width=\textwidth]{images/dataset-dress.png}
+  \end{minipage}%
+  ~~
+  \begin{minipage}{0.3\linewidth}
+    \includegraphics[width=\textwidth]{images/dataset-fairness.png}
+  \end{minipage}%
+
+  \vspace{1em}
+
+\end{frame}
+
+\begin{frame}{Fairness and Privacy \\
+    \large How much can fairness be affected by privacy?}
+  \vspace{-1em}
+  \begin{center}
+    \only<1>{\includegraphics[width=0.6\textwidth]{images/dataset-fairness.png}}%
+    \only<2>{\includegraphics[width=0.6\textwidth]{images/dataset-model2-fairness.png}}%
+    \only<3>{\includegraphics[width=0.6\textwidth]{images/dataset-model2-diff-fairness.png}}%
+    
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Fairness and Privacy \\
+    \large How much can fairness be affected by privacy?}
+  \begin{minipage}{0.5\linewidth}
+    \includegraphics[width=\textwidth]{images/dataset-model2-fairness.png}
+  \end{minipage}%
+  ~~~~~~
+  \begin{minipage}{0.5\linewidth}
+    Key assumption:
+    \begin{center}
+      \textit{confidence margin is lipschitz}
+    \end{center}
+
+    \vspace{-1.5em}
+    
+    \begin{align*}
+      | h(x) - h(x') | \le L_{x,y} \norm{ h - h' }
+    \end{align*}
+    ~~~~~~~~~~~~~for $x, y \in \mathcal{X} \times \{0, 1\}$
+  \end{minipage}%
+\end{frame}
+
+
+
+\begin{frame}{Bound on Difference of Fairness}
+  Difference of Fairness
+  \begin{align*}
+    | F_k(h) - F_k(h') |
+    \le
+    \chi_k (h) \norm{ h - h' }
+  \end{align*}
+
+  Where $\chi_k(h) = \mathbb{E}\Big( \frac{L_{X,Y}}{| h(X) |} ~\Big|~ S = k \Big)
+  + \mathbb{E}\Big( \frac{L_{X,Y}}{| h(X) |} \Big)$
+\end{frame}
+
+
+\begin{frame}{Loss of Fairness due to Privacy is Bounded} 
+  \vspace{-0.5em}
+
+  Take $h = h_{\text{priv}}$ and $h'= h_\star$:
+  \begin{align*}
+    | F_k(h^{\text{priv}}) - F_k(h_\star) |
+    \le
+    O\left(
+    \chi_k (h^{\text{priv}}) \frac{\sqrt{p}}{n \epsilon}
+    \right)   
+  \end{align*}
+  Since from DP literature (assuming strongly convex loss)\footfullcite{bassily2014Private}
+  \begin{align*}
+    \norm{ h_{\text{priv}} - h_\star} \le O\left( \frac{\sqrt{p}}{n \epsilon} \right) \qquad \text{ w.h.p.}
+  \end{align*}
+
+  \vspace{-1em}
+  
+  \Large
+  $\Rightarrow$ No need to know optimal model $h_\star$!
+  
+  \vspace{0.5em}
+\end{frame}
+
+
+\begin{frame}{Numerical Illustration\\[-0.5em]
+  \Large Not super tight, but meaningful!}
+  \begin{minipage}{0.5\linewidth}
+    \includegraphics[width=\textwidth]{images/numeric.png}
+    \includegraphics[width=\textwidth]{images/legend.png}
+  \end{minipage}%
+  ~~~~~~
+  \begin{minipage}{0.5\linewidth}
+    \begin{itemize}
+    \item folktables dataset
+    \item $n= 182, 339$ records
+    \item $p = 40$ features
+    \item Green = real private models
+    \end{itemize}
+  \end{minipage}%  
+\end{frame}
+
+
+\begin{frame}{Summary}
+Fairness of private models:
+\begin{itemize}
+\item is “close” to the one of non-private model
+\item is influenced by confidence margin of the model
+\end{itemize}
+
+More results: for other group fairness measures, multi-class problems...
+
+Open questions: use fairness-promoting methods, broader
+study of large-margin classifiers...
+
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \vspace{3em}
+
+    \Huge
+    Thank you! :)
+    
+    Questions?
+
+  \end{center}
+    \small
+    See the Paper:\\[0.5em]
+
+    ~~~~\fullcite{mangold2023Differential}
+\end{frame}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
