@@ -1,0 +1,167 @@
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{cleveref}
+\usepackage{comment}
+
+% Allowing page breaks in align
+\allowdisplaybreaks
+
+% Other commands
+\newcommand{\loss}[1]{\ell\ifthenelse{\isempty{#1}{}}{}{\!\left(#1\right)}}
+\newcommand{\negspace}[1]{\phantom{\hspace*{-#1}}}
+
+% Math operators
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\expect}{\mathbb{E}}
+\DeclareMathOperator*{\prob}{\mathbb{P}}
+
+% Vectors
+\newcommand{\mydefv}[1]{\expandafter\newcommand\csname v#1\endcsname{\mathbf{#1}}}
+\newcommand{\mydefallv}[1]{\ifx#1\mydefallv\else\mydefv{#1}\expandafter\mydefallv\fi}
+\mydefallv abcekmosuvwxyz\mydefallv
+
+% Vectors symbols
+\newcommand{\mydefvsym}[1]{\expandafter\newcommand\csname v#1\endcsname{\boldsymbol{\csname #1\endcsname}}}
+\newcommand{\mydefallvsym}[1]{\ifx#1\mydefallvsym\else\mydefvsym{#1}\expandafter\mydefallvsym\fi}
+\mydefallvsym {sigma}{alpha}{gamma}{mu}{rho}\mydefallvsym
+
+% Set
+\newcommand{\mydefset}[1]{\expandafter\newcommand\csname set#1\endcsname{{#1}}}
+\newcommand{\mydefallset}[1]{\ifx#1\mydefallset\else\mydefset{#1}\expandafter\mydefallset\fi}
+\mydefallset BFHPSTVYZ\mydefallset
+
+% Distribution over a space
+\newcommand{\mydefdistr}[1]{\expandafter\newcommand\csname distr#1\endcsname{\mathcal{D}_{\csname space#1\endcsname}}}
+\newcommand{\mydefalldistr}[1]{\ifx#1\mydefalldistr\else\mydefdistr{#1}\expandafter\mydefalldistr\fi}
+\mydefalldistr DHNSTVXZ\mydefalldistr
+
+% Empirical Distribution
+\newcommand{\mydefedistr}[1]{\expandafter\newcommand\csname edistr#1\endcsname{\widehat{\mathcal{D}}_{\csname space#1\endcsname}}}
+\newcommand{\mydefalledistr}[1]{\ifx#1\mydefalledistr\else\mydefedistr{#1}\expandafter\mydefalledistr\fi}
+\mydefalledistr WZ\mydefalledistr
+
+% Space
+\newcommand{\mydefspace}[1]{\expandafter\newcommand\csname space#1\endcsname{\mathcal{#1}}}
+\newcommand{\mydefallspace}[1]{\ifx#1\mydefallspace\else\mydefspace{#1}\expandafter\mydefallspace\fi}
+\mydefallspace DFGHKLMNPSRTUVXYZ\mydefallspace
+
+% Function
+\newcommand{\mydeff}[1]{\expandafter\newcommand\csname f#1\endcsname[2][]{#1##1\ifthenelse{\equal{##2}{}}{}{\!\left(##2\right)}}}
+\newcommand{\mydefallf}[1]{\ifx#1\mydefallf\else\mydeff{#1}\expandafter\mydefallf\fi}
+\mydefallf cdfqghklsuyzCFGHKLMRT\mydefallf
+
+% Function symbols
+\newcommand{\mydeffsym}[1]{\expandafter\newcommand\csname f#1\endcsname[2][]{\csname #1\endcsname##1\ifthenelse{\equal{##2}{}}{}{\!\left(##2\right)}}}
+\newcommand{\mydefallfsym}[1]{\ifx#1\mydefallfsym\else\mydeffsym{#1}\expandafter\mydefallfsym\fi}
+\mydefallfsym {Omega}{phi}{epsilon}{delta}{eta}{theta}{nu}{tildeh}{kappa}{rho}\mydefallfsym
+
+% Number Set
+\newcommand{\mydefnset}[1]{\expandafter\newcommand\csname nset#1\endcsname{\mathbb{#1}}}
+\newcommand{\mydefallnset}[1]{\ifx#1\mydefallnset\else\mydefnset{#1}\expandafter\mydefallnset\fi}
+\mydefallnset CNRSZ\mydefallnset
+
+% Norm
+\newcommand{\normTwo}[1]{\left\|#1\right\|_2}
+\newcommand{\normF}[1]{\left\|#1\right\|_\mathcal{F}}
+\newcommand{\normOne}[1]{\left\|#1\right\|_1}
+\newcommand{\normNuc}[1]{\left\|#1\right\|_\mathcal{*}}
+\newcommand{\normMax}[1]{\left\|#1\right\|_\infty}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\hinge}[1]{\left[#1\right]_+}
+\newcommand{\dotprod}[2]{\left\langle#1,#2\right\rangle}
+\newcommand{\trace}[1]{\text{Tr}\left(#1\right)}
+\newcommand{\inv}[1]{\left( #1 \right)^{-1}}
+\newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
+
+\newcommand{\scalar}[2]{\langle #1, #2 \rangle}
+
+% Indic
+\newcommand{\indic}[1]{\mathbb{I}_{ #1}}
+
+% Ceil and Floor
+\newcommand{\ceil}[1]{{\left\lceil #1 \right\rceil}}
+\newcommand{\floor}[1]{{\left\lfloor #1 \right\rfloor}}
+
+% Environments
+\newtheorem{myth}{Theorem}
+\newtheorem*{myth*}{Theorem}
+\newtheorem{mycor}{Corollary}
+\newtheorem*{mycor*}{Corollary}
+\newtheorem{mylem}{Lemma}
+\newtheorem*{mylem*}{Lemma}
+\newtheorem{mydef}{Definition}
+\newtheorem{myex}{Example}
+\newtheorem*{myex*}{Example}
+\newtheorem{myprop}{Proposition}
+
+\newtheorem{myrmq}{Remark}
+\newtheorem*{myrmq*}{Remark}
+
+
+% Bold font in theorem headings
+\makeatletter
+\def\th@plain{%
+  \thm@notefont{}% same as heading font
+  \itshape % body font
+}
+\def\th@definition{%
+  \thm@notefont{}% same as heading font
+  \normalfont % body font
+}
+\makeatother
+\newcommand{\targetlabel}[1][]{\fy{#1}}
+\newcommand{\fairlabel}[1][]{\fs{#1}}
+\newcommand{\DDP}[1][]{\text{DDP}\!\left(#1\right)}
+\newcommand{\DEO}[1][]{\text{DEO}\!\left(#1\right)}
+\newcommand{\eDDP}[1][]{\widehat{\text{DDP}}\!\left(#1\right)}
+\newcommand{\eDEO}[1][]{\widehat{\text{DEO}}\!\left(#1\right)}
+\newcommand{\eDDPm}[1][]{\widehat{\text{DDP}}^+}
+\newcommand{\eDDPp}[1][]{\widehat{\text{DDP}}^-}
+\newcommand{\lrDDP}[1][]{\text{LR}_{{\text{DDP}}}\!\left(#1\right)}
+\newcommand{\srDDP}[1][]{\text{SR}_{{\text{DDP}}}\!\left(#1\right)}
+\newcommand{\lrDEO}[1][]{\text{LR}_{{\text{DEO}}}\!\left(#1\right)}
+\newcommand{\lreDDP}[1][]{\text{LR}_{\widehat{\text{DDP}}}\!\left(#1\right)}
+\newcommand{\sreDDP}[1][]{\text{SR}_{\widehat{\text{DDP}}}\!\left(#1\right)}
+\newcommand{\lreDEO}[1][]{\text{LR}_{\widehat{\text{DEO}}}\!\left(#1\right)}
+\newcommand{\CCreDDP}[1][]{\text{CCR}_{\widehat{\text{DDP}}}\!\left(#1\right)}
+\newcommand{\crDDP}[1][]{\text{R}_{\text{DDP}}\!\left(#1\right)}
+\newcommand{\creDDP}[1][]{\text{R}_{\widehat{\text{DDP}}}\!\left(#1\right)}
+\newcommand{\CCreDEO}[1][]{\text{CCR}_{\widehat{\text{DEO}}}\!\left(#1\right)}
+\newcommand{\DDPkappa}[1][]{\text{DDP}_{\kappa}\!\left(#1\right)}
+\newcommand{\DDPdelta}[1][]{\text{DDP}_{\delta}\!\left(#1\right)}
+\newcommand{\eDDPkappa}[1][]{\widehat{\text{DDP}}_{\kappa}\!\left(#1\right)}
+\newcommand{\eDDPdelta}[1][]{\widehat{\text{DDP}}_{\delta}\!\left(#1\right)}
+\newcommand{\eDDPkappam}[1][]{\widehat{\text{DDP}}_{\kappa}^-}
+\newcommand{\eDDPdeltap}[1][]{\widehat{\text{DDP}}_{\delta}^+}
+\newcommand{\targeteps}{\varepsilon}
+\newcommand{\faireps}{\varepsilon_f}
+\newcommand{\targetmargin}{\gamma}
+\newcommand{\fairnessSlack}{\mu}
+\newcommand{\reasonable}{\tau}
+\newcommand{\highmarginFraction}{\nu}
+\newcommand{\learningProblem}{\mathrm{P}}
+\newcommand{\map}[2]{\phi^{#1}\!\left(#2\right)}
+\newcommand{\sign}[1]{\text{sign}\!\left(#1\right)}
+\newcommand{\trueR}[1]{L\!\left(#1\right)}
+\newcommand{\empR}[1]{\widehat{L}\!\left(#1\right)}
+\newcommand{\reg}[1]{\fOmega{#1}}
+\newcommand{\normal}[1]{\mathcal{N}\!\left(#1\right)}
+\newcommand{\rad}[2]{\mathfrak{R}_{#1}\!\left(#2\right)}
+
+\newcommand{\fairscalar}[1][]{\fq{#1}}
+\newcommand{\phimax}{\phi_{\mathrm{max}}}
+
+\newcommand{\cause}[1]{&{\color{gray}\downarrow{}\;{\small \text{#1}}} \nonumber\\}
+
+\newcommand{\priv}{\mathrm{priv}}
+\newcommand{\refer}{\mathrm{ref}}
+
+
+% accuracy
+\DeclareMathOperator*{\Acc}{Acc}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

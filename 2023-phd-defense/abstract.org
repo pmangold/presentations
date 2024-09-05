@@ -1,0 +1,10 @@
+* Title
+Exploiting Problem Structure in Privacy-Preserving Optimization and Machine Learning
+
+
+* Abstract
+In recent decades, concerns about the societal impact of machine learning have been growing. These concerns notably encompass data privacy and fairness of predictions. Guaranteeing data privacy typically reduces model utility: it is thus challenging to learn useful models while preserving privacy. This thesis explores new methods that improve utility for a given privacy guarantee by leveraging structural properties of problems, and studies the impact of privacy on fairness.
+
+The first two contributions of this thesis are two new differentially private optimization algorithms, that are both based on coordinate descent. They aim at exploiting different structural properties of the problem at hand. The first algorithm is based on stochastic coordinate descent, and can exploit imbalance in the scale of the gradient’s coordinates by using large step sizes. The second algorithm is based on greedy coordinate descent, which allows to focus on the most important coordinates of the problem, which can sometimes drastically improve utility (e.g., when the solution of the problem is sparse).
+
+The third contribution of this thesis studies the interplay of differential privacy and fairness. These two notions have rarely been studied simultaneously, and there are growing concerns that differential privacy may exacerbate unfairness. We show that group fairness measures have interesting regularity properties, which allows to derive an upper bound on the difference in fairness levels between a private model and its non-private counterpart.

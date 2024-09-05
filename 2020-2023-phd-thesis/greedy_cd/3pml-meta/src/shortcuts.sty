@@ -1,0 +1,294 @@
+\newcommand{\nn}{\nonumber}
+\newcommand{\nnl}{\nonumber \\}
+\newcommand{\nnlq}{\nonumber \\ & \quad}
+\newcommand{\nnlqq}{\nonumber \\ & \qquad}
+\newcommand{\nnlqqq}{\nonumber \\ & \qquad \quad}
+
+\newcommand{\abs}[1]{| #1 |}
+\newcommand{\absbig}[1]{\Big | #1\Big |}
+\newcommand{\norm}[1]{\lVert #1\rVert}
+\newcommand{\normbig}[1]{\Big\lVert #1\Big\rVert}
+\newcommand{\scalar}[2]{\langle #1, #2 \rangle}
+
+\newcommand{\RR}{\mathbb{R}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+
+
+%-------------------------------------------------------------------------------
+% math operators
+%-------------------------------------------------------------------------------
+
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\median}{Med}
+\DeclareMathOperator{\MAD}{MAD}
+\DeclareMathOperator{\Card}{Card}
+\DeclareMathOperator{\rg}{rg}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\corr}{corr}
+\DeclareMathOperator{\cov}{cov}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov} % \def\Cov{\mathop{\rm Cov}\nolimits}
+\DeclareMathOperator{\pred}{pred}
+\DeclareMathOperator{\Id}{Id}
+\DeclareMathOperator{\pen}{pen}
+\DeclareMathOperator{\vect}{vect}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\prox}{prox}
+\DeclareMathOperator{\rang}{rang}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\card}{card}
+\newcommand{\Beta}{\mathrm{B}}
+\DeclareMathOperator{\Lap}{Lap}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\def\essinf{\mathop{\rm ess\, inf}}
+\def\esssup{\mathop{\rm ess\, sup}}
+\def\supp{\mathop{\rm supp}}
+
+
+\newcommand{\expec}[2]{\mathbb E_{#1} \hspace{-0.29em} \left[ #2 \right]}
+\newcommand{\smallexpec}[2]{\mathbb E_{#1} [ #2 ]}
+\newcommand{\condexpec}[3]{\mathbb E_{#1} \hspace{-0.29em} \left[ #2 \middle\vert #3 \right]}
+\newcommand{\prob}[1]{\textnormal{Pr} \left[ #1 \right]}
+\newcommand{\condprob}[2]{\textnormal{Pr} \left[ #1 \,\middle\vert\, #2 \right]}
+\def\shat{{\mathbb S}}
+\def\IND#1{{\mathbb I}_{{\left[ #1 \right]}}}
+
+
+%-------------------------------------------------------------------------------
+% symbols
+%-------------------------------------------------------------------------------
+
+% cal letters
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\cU}{\mathcal{U}}
+\newcommand{\cV}{\mathcal{V}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+
+% bold letters (upper case)
+\newcommand{\bfA}{\mathbf{A}}
+\newcommand{\bfB}{\mathbf{B}}
+\newcommand{\bfC}{\mathbf{C}}
+\newcommand{\bfD}{\mathbf{D}}
+\newcommand{\bfE}{\mathbf{E}}
+\newcommand{\bfF}{\mathbf{F}}
+\newcommand{\bfG}{\mathbf{G}}
+\newcommand{\bfH}{\mathbf{H}}
+\newcommand{\bfI}{\mathbf{I}}
+\newcommand{\bfJ}{\mathbf{J}}
+\newcommand{\bfK}{\mathbf{K}}
+\newcommand{\bfL}{\mathbf{L}}
+\newcommand{\bfM}{\mathbf{M}}
+\newcommand{\bfN}{\mathbf{N}}
+\newcommand{\bfO}{\mathbf{O}}
+\newcommand{\bfP}{\mathbf{P}}
+\newcommand{\bfQ}{\mathbf{Q}}
+\newcommand{\bfR}{\mathbf{R}}
+\newcommand{\bfS}{\mathbf{S}}
+\newcommand{\bfT}{\mathbf{T}}
+\newcommand{\bfU}{\mathbf{U}}
+\newcommand{\bfV}{\mathbf{V}}
+\newcommand{\bfW}{\mathbf{W}}
+\newcommand{\bfX}{\mathbf{X}}
+\newcommand{\bfY}{\mathbf{Y}}
+\newcommand{\bfZ}{\mathbf{Z}}
+
+% bold letters (lower case)
+\newcommand{\bfa}{\mathbf{a}}
+\newcommand{\bfb}{\mathbf{b}}
+\newcommand{\bfc}{\mathbf{c}}
+\newcommand{\bfd}{\mathbf{d}}
+\newcommand{\bfe}{\mathbf{e}}
+\newcommand{\bfbf}{\mathbf{f}}
+\newcommand{\bfg}{\mathbf{g}}
+\newcommand{\bfh}{\mathbf{h}}
+\newcommand{\bfi}{\mathbf{i}}
+\newcommand{\bfj}{\mathbf{j}}
+\newcommand{\bfk}{\mathbf{k}}
+\newcommand{\bfl}{\mathbf{l}}
+%\newcommand{\fbm}{\mathbf{m}} % not compatible with bm package.
+\newcommand{\bfn}{\mathbf{n}}
+\newcommand{\bfo}{\mathbf{o}}
+\newcommand{\bfp}{\mathbf{p}}
+\newcommand{\bfq}{\mathbf{q}}
+\newcommand{\bfr}{\mathbf{r}}
+\newcommand{\bfs}{\mathbf{s}}
+\newcommand{\bft}{\mathbf{t}}
+\newcommand{\bfu}{\mathbf{u}}
+\newcommand{\bfv}{\mathbf{v}}
+\newcommand{\bfw}{\mathbf{w}}
+\newcommand{\bfx}{\mathbf{x}}
+\newcommand{\bfy}{\mathbf{y}}
+\newcommand{\bfz}{\mathbf{z}}
+
+% bold greek letters
+\newcommand{\bbeta}{{\boldsymbol\beta}}
+\newcommand{\bmu}{{\boldsymbol\mu}}
+\newcommand{\bxi}{{\boldsymbol\xi}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand\bSigma{{\boldsymbol\Sigma}}
+\newcommand\bOmega{{\boldsymbol\Omega}}
+\newcommand{\beps}{{\boldsymbol\eps}}
+\newcommand{\bepsilon}{{\boldsymbol\varepsilon}}
+\newcommand{\bfepsilon}{{\boldsymbol\varepsilon}}
+\newcommand{\bftheta}{{\boldsymbol\theta}}
+\newcommand{\bfbeta}{{\boldsymbol\beta}}
+
+% bb letters
+\newcommand{\bbA}{\mathbb{A}}
+\newcommand{\bbB}{\mathbb{B}}
+\newcommand{\bbC}{\mathbb{C}}
+\newcommand{\bbD}{\mathbb{D}}
+\newcommand{\bbE}{\mathbb{E}}
+\newcommand{\bbF}{\mathbb{F}}
+\newcommand{\bbG}{\mathbb{G}}
+\newcommand{\bbH}{\mathbb{H}}
+%\newcommand{\bbI}{\mathbb{I}}
+\newcommand{\bbI}{\mathds{1}}
+\newcommand{\bbJ}{\mathbb{J}}
+\newcommand{\bbK}{\mathbb{K}}
+\newcommand{\bbL}{\mathbb{L}}
+\newcommand{\bbM}{\mathbb{M}}
+\newcommand{\bbN}{\mathbb{N}}
+\newcommand{\bbO}{\mathbb{O}}
+\newcommand{\bbP}{\mathbb{P}}
+\newcommand{\bbQ}{\mathbb{Q}}
+\newcommand{\bbR}{\mathbb{R}}
+\newcommand{\bbS}{\mathbb{S}}
+\newcommand{\bbT}{\mathbb{T}}
+\newcommand{\bbU}{\mathbb{U}}
+\newcommand{\bbV}{\mathbb{V}}
+\newcommand{\bbW}{\mathbb{W}}
+\newcommand{\bbX}{\mathbb{X}}
+\newcommand{\bbY}{\mathbb{Y}}
+\newcommand{\bbZ}{\mathbb{Z}}
+
+%-------------------------------------------------------------------------------
+% text shortcuts
+%-------------------------------------------------------------------------------
+
+% latin
+\newcommand{\ie}{{\em i.e.,~}}
+\newcommand{\etal}{{\em et al.~}}
+\newcommand{\eg}{{\em e.g.,~}}
+\newcommand{\lcf}{{\em cf.~}}
+\newcommand{\rem}{\underline{Rem}:~}
+\newcommand{\iid}{\textit{i.i.d.}}
+\newcommand{\VA}{\textit{v.a.}~}
+
+% english
+\newcommand{\wrt}{{w.r.t.~}}
+
+% reviewing
+\usepackage[colorinlistoftodos,textsize=scriptsize]{todonotes}
+\setlength{\marginparwidth}{1.8cm}
+\setuptodonotes{color=pink}
+\usepackage{marginnote}
+\usepackage{zref-savepos}
+
+\newcommand{\paul}[1]{\todo{\textbf{Paul:} #1}}
+\newcommand{\aurelien}[1]{\todo[color=green]{\textbf{Aurelien:} #1}}
+\newcommand{\marc}[2][]{\todo[color=red!60,#1]{\textbf{Marc:} #2}}
+\newcommand{\jo}[2][]{\todo[color=blue!60,#1]{\textbf{Jo:} #2}}
+\newcommand{\jrs}[1]{\textcolor{red}{#1}}
+\renewcommand{\paul}[1]{}
+\renewcommand{\aurelien}[1]{}
+\renewcommand{\marc}[2][]{}
+\renewcommand{\jo}[2][]{}
+\renewcommand{\jrs}[1]{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \theoremstyle{plain}
+% \newtheorem{theorem}{Theorem}[section]
+% \newtheorem{proposition}[theorem]{Proposition}
+% \newtheorem{lemma}[theorem]{Lemma}
+% \newtheorem{corollary}[theorem]{Corollary}
+% \theoremstyle{definition}
+% \newtheorem{definition}[theorem]{Definition}
+% \newtheorem{assumption}[theorem]{Assumption}
+% \newtheorem{remark}[theorem]{Remark}
+
+% \newcommand*{\sketchproofname}{Sketch of Proof}
+% \newenvironment{sketchproof}[1][\sketchproofname]{
+%   \begin{proof}[#1] } {
+%   \end{proof}
+% }
+
+% \theoremstyle{theorem}
+% \newtheorem{innercustomthm}{Theorem}
+% \newenvironment{restate-theorem}[1]
+% {\renewcommand\theinnercustomthm{#1}\innercustomthm}
+% {\endinnercustomthm}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dot at end of paragraph
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\usepackage[explicit]{titlesec}
+%\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}[runin]
+  {\normalfont\normalsize\bfseries}{}{0pt}{\theparagraph\hspace*{1em}#1.}
+\titleformat{name=\paragraph,numberless}[runin]
+  {\normalfont\normalsize\bfseries}{}{0pt}{#1.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% colors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{amaranth}{rgb}{0.9, 0.17, 0.31}
+\definecolor{mypurple}{HTML}{7500AD}
+\definecolor{indiagreen}{rgb}{0.07, 0.53, 0.03}
+\definecolor{amber}{rgb}{1.0, 0.49, 0.0}
+
+
+
+  % emphasis
+\newcommand{\emphcol}[1]{
+  {\color{amaranth} \boldsymbol{#1}}
+}
+
+\newcommand{\emphcolb}[1]{
+  {\color{mypurple} \boldsymbol{#1}}
+}
+
+
+\newcommand{\emphcolc}[1]{
+  {\color{amber} \boldsymbol{#1}}
+}
+
+\let\emph\relax % there's no \RedeclareTextFontCommand
+\DeclareTextFontCommand{\emph}{\color{amaranth}\bfseries\em\boldmath}

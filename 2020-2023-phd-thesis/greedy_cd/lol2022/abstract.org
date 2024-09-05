@@ -1,0 +1,7 @@
+Title:
+
+High-Dimensional Private Empirical Risk Minimization by Greedy Coordinate Descent
+
+Abstract:
+
+In differentially private empirical risk minimization (DP-ERM), worst-case utility decreases as the dimension increases. This is a major obstacle to privately learning large machine learning models. In high dimension, some model's parameters typically carry more information than others. We propose a differentially private greedy coordinate descent (DP-GCD) algorithm that can exploit this property to reduce the dependence on the dimension.

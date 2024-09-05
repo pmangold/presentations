@@ -1,0 +1,401 @@
+\documentclass[aspectratio=169,17pt,t]{beamer}
+
+\usepackage{hyperref}
+\usepackage{biblatex}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{dsfont}
+
+\addbibresource{references.bib}
+
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+
+
+%%%%%% Template things
+
+% space between paragraphs
+\parskip=1em
+
+\setlength{\abovedisplayskip}{0pt}
+\setlength{\belowdisplayskip}{0pt}
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+
+% title font
+\setbeamerfont{title}{size=\LARGE}%, series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}%, series=\bfseries}
+\setbeamerfont{author}{size=\footnotesize}%, series=\bfseries}
+\setbeamerfont{institute}{size=\footnotesize}%, series=\bfseries}
+\setbeamerfont{frametitle}{size=\LARGE}%, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\large}%, series=\bfseries}
+
+% spacing between frame title and content
+\addtobeamertemplate{frametitle}{\vspace*{0.2cm}}{\vspace*{0.5cm}}
+
+% color
+\definecolor{beamer@blendedblue}{rgb}{0.44, 0.16, 0.39}
+
+% no navigation
+\beamertemplatenavigationsymbolsempty
+
+% slide numbers
+\setbeamertemplate{footline}
+{
+  \hbox{\begin{beamercolorbox}[wd=1\paperwidth,ht=5.25ex,dp=4ex,right]{framenumber}%
+      \large \insertframenumber{}~~
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% centered titles
+\makeatletter
+\long\def\beamer@@frametitle[#1]#2{%
+  \beamer@ifempty{#2}{}{%
+    \gdef\insertframetitle{\centering{#2\ifnum\beamer@autobreakcount>0\relax{}\space\usebeamertemplate*{frametitle continuation}\fi}}%
+  \gdef\beamer@frametitle{#2}%
+  \gdef\beamer@shortframetitle{#1}%
+}%
+}
+\makeatother
+
+%%%%% Equations
+
+\newcounter{mytn}
+\makeatletter
+\newcommand{\tmn}[3][]{\stepcounter{mytn}%
+\tikzmarknode[Col\the\numexpr\value{mytn}-\mytn@start\relax/.try,inner xsep=2pt,%
+minimum height=1.6em,inner sep=2mm,#1]{mytn-\number\value{mytn}}{#2}%
+\expandafter\gdef\csname tmn@annot@\number\value{mytn}\endcsname{#3}}
+\newenvironment{AnnotatedEquation}{\edef\mytn@start{\number\value{mytn}}%
+\begin{equation*}}{\end{equation*}%
+\edef\mytn@end{\number\value{mytn}}%
+\ifnum\mytn@end>\mytn@start
+\begin{itemize}
+ \foreach \X in {\the\numexpr\mytn@start+1,...,\mytn@end}
+ {\item \tikzmarknode{mytn-annot-\X}{\csname tmn@annot@\X\endcsname}%
+   \begin{tikzpicture}[overlay,remember picture]
+  \draw[-stealth] (mytn-annot-\X.east) to[out=0,in=-90] (mytn-\X.south);
+ \end{tikzpicture}}
+\end{itemize}
+\fi}
+\makeatother
+\tikzset{ Col1/.style= {fill=blue!20,anchor=base,rounded corners=2pt},
+Col2/.style= {Col1, fill=red!20},
+Col3/.style= {Col1, fill=green!20},
+Col4/.style= {Col1, fill=yellow!20},
+}
+
+\graphicspath{{./img}}
+
+\makeatletter
+\def\input@path{{./src}}
+\makeatother
+
+\usepackage{src/shortcuts}
+
+
+%%%%% INFORMATION
+
+\title{High-Dimensional Private ERM}
+\subtitle{by Greedy Coordinate Descent
+  \vspace{-1em}}
+\author{
+  \textbf{Paul Mangold}\inst{1},
+  Aurélien Bellet\inst{1},
+  Joseph Salmon\inst{2},
+  Marc Tommasi\inst{1}
+  \vspace{-0.5em}
+}
+\institute{\inst{1} Inria Lille \qquad %
+  \inst{2} Univ. Montepellier \\[1em]
+  \normalsize 3PML Workshop @Meta \\[0.3em]
+  \small November 9, 2022}
+
+\titlegraphic{
+  \vspace{-2.5em}
+  \raisebox{-0.5\height}{\includegraphics[height=1.3cm]{logos/logo_inria.pdf}}\hspace*{2cm}~%
+  \raisebox{-0.5\height}{\includegraphics[height=1.7cm]{logos/logo_lille.pdf}}\hspace*{2cm}~%
+  \raisebox{-0.5\height}{\includegraphics[height=1.7cm]{logos/logo_montpellier.pdf}}
+  \vspace{-2em}
+}
+\date{}
+
+%%%%% DOCUMENT
+
+\begin{document}
+
+%% TITLE PAGE
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+\addtocounter{framenumber}{-1}
+
+%\hspace{-5em}
+\begin{frame}
+  % \vspace{-1em}
+  \includegraphics[width=1\textwidth]{example_none.pdf}
+
+  \vspace{-14.2em}
+
+  \hspace{2em} Empirical Risk Minimization:
+  \vspace{-0.5em}
+  \begin{align*}
+    \min_{w\in\mathbb{R}^p} f(w)
+    & = \frac 1n \sum_{i=1}^n \ell(w; d_i)
+  \end{align*}
+\end{frame}
+
+%\hspace{-5em}
+\begin{frame}
+%  \vspace{-1.8em}
+  \includegraphics[width=1\textwidth]{example_non_private_only_gd.pdf}
+  \addtocounter{framenumber}{-1}
+\end{frame}
+
+\begin{frame}
+%  \vspace{-1.8em}
+  \includegraphics[width=1\textwidth]{example_non_private.pdf}
+  \addtocounter{framenumber}{-1}
+\end{frame}
+
+\begin{frame}{Differentially Private ERM}
+  \vspace{-1em}
+  \begin{align*}
+    w^{\text{priv}} \approx & \argmin_{w \in \mathbb{R}^p}  f(w) = \frac 1n \sum_{i=1}^n \ell(w; d_i) \\[1em]
+    & \qquad \text{such that $w^{\text{priv}}$ is $(\epsilon, \delta)$-DP}
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Differential Privacy}
+  $\emphcolb{\cA} : D \mapsto w^{\text{priv}}$ is
+  $(\emphcol{\epsilon}, \emphcol{\delta})$-\textit{Differentially
+    Private}
+  \begin{align*}
+    \prob{\emphcolb{\cA}(D) \in \cS} \le e^{\emphcol{\epsilon}} \prob{\emphcolb{\cA}(D') \in \cS} + \emphcol{\delta}
+  \end{align*}
+
+  \begin{flushright}
+    (where $D$ and $D'$ differ on one element)
+  \end{flushright}
+
+\end{frame}
+
+
+
+% \begin{frame}
+%   \vspace{-0.3em}
+%   \includegraphics[width=1.17\textwidth]{example_1.pdf}
+%   \addtocounter{framenumber}{-1}
+% \end{frame}
+
+% \hspace{-5em}
+% \begin{frame}
+%   \vspace{-0.3em}
+%   \includegraphics[width=1.17\textwidth]{example_3.pdf}
+%   \addtocounter{framenumber}{-1}
+% \end{frame}
+
+
+\begin{frame}{Private Gradient Descent}
+  For $T$ iterations:
+  \begin{align*}
+    w^{t+1} = w^t - \eta
+    \left(  \emphcol{\nabla f(w^t)} + \emphcolb{\cN(\sigma^2 \bbI_p)} \right)
+  \end{align*}
+
+  Noise scale: $\displaystyle\emphcolb{\sigma} \propto \frac{\emphcol{\sqrt{Tp}}}{n\epsilon}$
+
+  \vspace{0em}
+\end{frame}
+
+\begin{frame}
+  \includegraphics[width=1\textwidth]{example_private_only_gd.pdf}
+\end{frame}
+
+\begin{frame}{Utility: $\expec{}{f(w) - f^*} = \text{ ?}$}
+  \framesubtitle{assuming $f$ and $\nabla f$ are Lipschitz}
+
+  \pause
+
+  \vspace{1em}
+
+  \begin{itemize}
+  \item Convex: $\displaystyle \widetilde O\left( \frac{\emphcol{\sqrt{p}}}{n\epsilon} \right)$
+  \item Strongly-Convex:  $\displaystyle \widetilde O\left( \frac{\emphcol{p}}{n^2\epsilon^2} \right)$
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \vspace{4em}
+  \begin{center}
+    \LARGE
+    Can we choose updates \\
+    ``more wisely''?
+  \end{center}
+\end{frame}
+
+\begin{frame}{Private \emph{Greedy} CD}
+  For $T$ iterations:
+  \begin{align*}
+    w^{t+1}_{j} =
+      w^t_{j} - \eta_{j}
+    \left( \emphcol{\nabla_{j} f(w^t)}
+    + \emphcolb{\Lap(\lambda_{j})} \right)
+  \end{align*}
+
+  where $\displaystyle j = \argmax_{j'\in[p]} \abs{\emphcol{\nabla_{j'} f(w^t)} + \emphcolb{\Lap(\lambda_{j'})}} $
+
+  \pause
+
+  Noise scale: $\displaystyle\emphcolb{\lambda_j} \propto \frac{\emphcol{\sqrt{T}}}{n\epsilon}$, independent on the dimension!!
+
+\end{frame}
+
+\begin{frame}
+  \includegraphics[width=1\textwidth]{example_private.pdf}
+\end{frame}
+
+
+
+
+
+\begin{frame}{Utility: $\expec{}{f(w) - f^*} = \text{ ?}$}
+  \framesubtitle{assuming $f$ and $\nabla f$ are Lipschitz}
+
+  \pause
+
+  For imbalanced objective/problems with sparse solutions:
+  \pause
+  \begin{itemize}
+  \item Convex: $\displaystyle \widetilde O\left( \frac{\emphcol{\log{p}}}{n\epsilon} \right)$
+  \item Strongly-Convex:  $\displaystyle \widetilde O\left( \frac{\emphcol{\log{p}}}{n^2\epsilon^2} \right)$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{\Large When is the dependence logarithmic?}
+  \begin{itemize}
+  \item Imbalanced problems:
+    \vspace{0.5em}
+    \begin{itemize}
+    \item $\norm{w^0 - w^*}_{L,1} = \sum_{j=1}^p L_j^{1/2} \abs{w_j^0-w_j^*}$ is small
+    \vspace{0.2em}
+    \item strong-convexity constant w.r.t. $\ell_1$-norm is large
+    \end{itemize}
+
+    \pause
+    \vspace{1em}
+
+  \item Sparse solutions (strongly-convex loss):
+    \vspace{0.5em}
+    \begin{itemize}
+    \item $w^*$ has few non-zero coordinates
+      \vspace{0.2em}
+    \item few total number of iterations/iterates remain sparse
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+% \begin{frame}
+%   \vspace{-0em}
+%   {
+%     \begin{center}
+%       \Huge Fast Initial Progress
+%     \end{center}
+%   }
+%   \begin{center}
+%     for $\mu_2$-strongly-convex $f$, $L$-Lipschitz $\nabla f$, \\[-0.5em] \emph{worst case}
+%   \end{center}
+%   \vspace{-0.5em}
+
+%   \begin{align*}
+%     %    \label{gcd:fast-initial-convergence:eq}
+%     \!\!\!\!f(w^T) - f^*
+%      & \!\le \prod_{t=1}^T \Big(1 - \frac{\mu_{2}}{4L\emphcol{p}}\Big) (f(w^0) - f^*) \\
+%     & \quad + O\Big(\frac{T}{\mu_{2} n^2 \epsilon^2}\Big)
+%   \end{align*}
+
+%   \vspace{0.5em}
+% \end{frame}
+
+% \begin{frame}
+%   \vspace{-0em}
+%   {
+%     \begin{center}
+%       \Huge Fast Initial Progress
+%     \end{center}
+%   }
+%   \begin{center}
+%     for $\mu_2$-strongly-convex $f$, $L$-Lipschitz $\nabla f$, \\[-0.5em] \emph{$\tau$-sparse solution}
+%   \end{center}
+%   \vspace{-0.5em}
+
+%   \begin{align*}
+%     %    \label{gcd:fast-initial-convergence:eq}
+%     \!\!\!\!f(w^T) - f^*
+%      & \!\le \prod_{t=1}^T \Big(1 - \frac{\mu_{2}}{4L\emphcol{(t + \tau)}}\Big) (f(w^0) - f^*) \\
+%     & \quad + O\Big(\frac{T\emphcol{(T+\tau)}}{\mu_{2} n^2 \epsilon^2}\Big)
+%   \end{align*}
+
+%   \vspace{0.5em}
+
+%   \begin{center}
+%     \Huge Fast when $T+\tau \ll p$
+%   \end{center}
+% \end{frame}
+
+\begin{frame}
+  \begin{center}
+    Logistic Regression ($n=1000,p=100$)\\
+    $w^* \sim \text{lognormal}(\sigma=2)^p$
+
+    \raisebox{-0.5\height}{\includegraphics[width=0.5\textwidth]{expe_lognormal.pdf}}
+    \raisebox{-0.3\height}{\includegraphics[width=0.3\textwidth]{plot_legend.pdf}}
+  \end{center}
+\end{frame}
+
+
+\begin{frame}{Wrap up}
+  \begin{itemize}
+  \item Private Greedy CD provably works!
+    \vspace{0.5em}
+  \item It can ``bypass'' ambient dimension
+    \vspace{0.5em}
+  \item In fact, GCD adapts to problems geometry
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Thank you!}
+
+  \vspace{1em}
+
+  For more details, preprint online:
+
+  \hspace{2em}\url{https://arxiv.org/abs/2207.01560}
+\end{frame}
+
+% \begin{frame}
+%   {
+%     \begin{center}
+%       \Huge Some Open Questions
+%     \end{center}
+%   }
+
+%   \begin{itemize}
+%   \item Proximal greedy CD
+%   \item Effciient greedy selection
+%   \end{itemize}
+% \end{frame}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

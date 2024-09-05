@@ -1,0 +1,76 @@
+\usetikzlibrary{fadings}
+
+
+\mode<presentation>
+
+% frame without head and foot line, and without numbering
+\makeatletter
+\newenvironment{notitle}{
+  \setbeamertemplate{footline}{}
+  \setbeamertemplate{headline}{}
+}{}
+\makeatother
+
+
+
+%% \setbeamertemplate{headline}{
+%%   \vskip3.5em
+%%   \tikz[remember picture,overlay]{
+%%     \node(0, 0)[anchor=south west]{\hskip1em\usebeamerfont{frametitle}\strut\insertsectionhead
+%%     };
+%%     \draw[line width=0.1em, headerline!40](0, 0.5em)--+(\textwidth,0);
+%%   }
+%%   % if subsection is not empty
+%%   \ifx\insertsubsection\empty\else
+%%   \vskip-0.5em
+%%   \tikz[remember picture,overlay]{
+%%     \fill[headerline!40,path fading=east] (0,0) rectangle (\linewidth,-2em);
+%%     \draw[anchor=north west] (0, 0.15em) node {\hskip1em\usebeamerfont{framesubtitle}\strut\insertsubsectionhead
+%%     };
+%%   }
+%%   \vskip2em
+%%   \fi
+%%   \vskip2.5em
+%% }
+
+\makeatletter
+\setbeamertemplate{navigation symbols}{}
+
+\makeatother
+\setbeamertemplate{footline}
+{
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=2ex,right]{numbering in head/foot}%
+    \usebeamerfont{numbering in head/foot} \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}~
+  \end{beamercolorbox}%
+  \vskip0pt%
+}
+
+
+
+%% \setbeamertemplate{section page}{
+%%   \centering
+%%  \begin{beamercolorbox}[sep=12pt,center, rounded=true]{part title}
+%% %    \usebeamercolor[fg]{sectionpagetitle}\usebeamerfont{sectionpagetitle}\insertsection\par
+%%     \Large
+%%     \tableofcontents
+%% %    \setcounter{tocdepth}{1}
+%%     [
+%%         currentsection,
+%% %        currentsubsection,
+%%         hideallsubsections
+%%     ]
+%%   \end{beamercolorbox}
+%% }
+
+%% \AtBeginSection{
+%% %  \begingroup
+%% %  \setbeamertemplate{headline}{}
+%%     \begin{frame}[plain]
+%%       \sectionpage
+%%     \end{frame}
+%%   \addtocounter{framenumber}{-1}
+%% %  \endgroup
+%% }
+
+
+\mode<all>

@@ -1,0 +1,157 @@
+\mode<presentation>
+
+% Title page
+% Default page
+
+
+% more parameters for itemize
+\RequirePackage{enumitem}
+
+
+% Table of contents
+% \setbeamertemplate{section in toc}[square]
+% \setbeamertemplate{subsection in toc}[square]
+
+% Block
+\defbeamertemplate*{block begin}{green}{
+	\begin{beamercolorbox}[wd=\textwidth, sep=0.5em, leftskip=0.1em]{block title}
+		\usebeamerfont*{block title}\insertblocktitle
+	\end{beamercolorbox}
+	\nointerlineskip
+	\begin{beamercolorbox}[wd=\textwidth, sep=0.5em, leftskip=0.1em]{block body}
+}
+
+\defbeamertemplate*{block end}{green}{
+	\end{beamercolorbox}
+}
+
+% Alert block
+\defbeamertemplate*{block alerted begin}{green}{
+	\begin{beamercolorbox}[wd=\textwidth, sep=0.5em, leftskip=0.1em]{block title alerted}
+		\usebeamerfont*{block title}\insertblocktitle
+	\end{beamercolorbox}
+	\nointerlineskip
+	\begin{beamercolorbox}[wd=\textwidth, sep=0.5em, leftskip=0.1em]{block body alerted}
+}
+
+\defbeamertemplate*{block alerted end}{green}{
+	\end{beamercolorbox}
+}
+
+% Example block
+\defbeamertemplate*{block example begin}{green}{
+	\begin{beamercolorbox}[wd=\textwidth, sep=0.5em, leftskip=0.1em]{block title example}
+		\usebeamerfont*{block title}\insertblocktitle
+	\end{beamercolorbox}
+	\nointerlineskip
+	\begin{beamercolorbox}[wd=\textwidth, sep=0.5em, leftskip=0.1em]{block body example}
+}
+
+\defbeamertemplate*{block example end}{green}{
+	\end{beamercolorbox}
+}
+
+% Itemize
+%\setbeamertemplate{itemize item}[circle]
+%\setbeamertemplate{itemize subitem}[circle]
+%
+%\setlength{\leftmargini}{1.5em}
+
+%\setbeamertemplate{itemize item}{\color{amaranth}$\circ$}
+%\setbeamertemplate{itemize subitem}{\color{amaranth}--}
+\setlist[itemize]{leftmargin=1.5em, itemsep=0em, topsep=0em, label={\color{amaranth}$\circ$}}
+\setlist[itemize,2]{topsep=-0.5em, label={\color{amaranth}--}}
+
+
+% long citation
+\RequirePackage[firstinits=true]{biblatex}
+
+% \newcommand{\mkbibblock}[1]{
+%   \begin{beamercolorbox}[wd=\textwidth, sep=0.5em, leftskip=0.1em]{block body alerted}
+% %    \setbeamercolor{separation line}{use=structure,bg=structure.fg!50!bg}
+%     \begin{minipage}[t]{0.03\textwidth}
+%       \centering
+%       \vspace{0pt}
+%       \includegraphics[width=\textwidth]{images/article.pdf}
+%     \end{minipage}%
+%     % \hfill
+%     \begin{minipage}[t]{0.95\textwidth}
+%       #1
+%     \end{minipage}%
+%   \end{beamercolorbox}
+% }
+
+\newcommand{\mkbibblock}[1]{
+  \@tempdima=\linewidth%  largeur boite interne
+  \advance\@tempdima by -2px
+  \begin{beamercolorbox}[wd=\linewidth, sep=1px, leftskip=0em]{block body alerted border}
+    \begin{beamercolorbox}[wd=\@tempdima, sep=0.5em]{block body alerted}
+    \begin{minipage}[t]{0.01\linewidth}
+      \centering
+      \vspace{0pt}
+      \includegraphics[width=4\linewidth]{./themeimages/article.pdf}
+    \end{minipage}%
+    % \hfill
+    \begin{minipage}[t]{0.9\linewidth}
+      #1
+    \end{minipage}%
+    \end{beamercolorbox}
+  \end{beamercolorbox}
+}
+
+
+
+\DeclareCiteCommand{\longcite}[\mkbibblock]{
+  \begin{itemize}[itemsep=0.5em]
+    \setlength{\itemindent}{0em}
+    \footnotesize
+    }{
+    \item[--] \printnames[firstfirstinit-last]{author}, \textit{\printfield{title}}, \printfield{year}.
+%      \iffieldundef{journal}
+%      {}
+%      {, \printfield{journal}}%
+%      .
+    }{}{
+    \end{itemize}
+}%
+
+
+\newcommand{\mksmallbibblock}[1]{
+  \@tempdima=\linewidth%  largeur boite interne
+  \advance\@tempdima by -2px
+  \begin{beamercolorbox}[wd=\linewidth, sep=1px, leftskip=0em]{block body alerted border}
+    \begin{beamercolorbox}[wd=\@tempdima, sep=0.5em]{block body alerted}
+    \begin{minipage}[t]{0.02\linewidth}
+      \centering
+      \vspace{-1pt}
+      \includegraphics[width=\linewidth]{./themeimages/article.pdf}
+    \end{minipage}%
+    % \hfill
+    \begin{minipage}[t]{0.93\linewidth}
+      #1
+    \end{minipage}%
+    \end{beamercolorbox}
+  \end{beamercolorbox}
+}
+
+
+
+\DeclareCiteCommand{\smalllongcite}[\mksmallbibblock]{
+  \begin{itemize}[itemsep=0.5em]
+    \setlength{\itemindent}{0em}
+    \footnotesize
+    }{
+    \item[--] \printnames[firstfirstinit-last]{author}, \textit{\printfield{title}}, \printfield{year}%
+      \iffieldundef{journal}
+      {}
+      {, \printfield{journal}}%
+      .
+    }{}{
+    \end{itemize}
+}%
+
+
+\AtBeginDocument{\fontsize{17}{30}\selectfont}
+
+
+\mode<all>

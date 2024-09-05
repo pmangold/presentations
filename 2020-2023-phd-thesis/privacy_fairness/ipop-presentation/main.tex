@@ -1,0 +1,280 @@
+\documentclass[aspectratio=169,14pt]{beamer}
+
+\usepackage{hyperref}
+\usepackage{biblatex}
+
+\usepackage{amsmath}
+
+\addbibresource{references.bib}
+
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+
+\include{src/usercommands}
+\include{src/letters}
+
+\definecolor{darkspringgreen}{rgb}{0.09, 0.45, 0.27}
+\makeatletter
+\newcommand{\Pause}[1][]{\unless\ifmeasuring@\relax
+\pause[#1]%
+\fi}
+\makeatother
+%%%%%% Template things
+
+% space between paragraphs
+\parskip=1em
+
+% title font
+\setbeamerfont{title}{size=\LARGE}%, series=\bfseries}
+\setbeamerfont{frametitle}{size=\Large}%, series=\bfseries}
+
+% spacing between frame title and content
+\addtobeamertemplate{frametitle}{\vspace*{0.2cm}}{\vspace*{0.5cm}}
+
+% color
+\definecolor{beamer@blendedblue}{rgb}{0.44, 0.16, 0.39}
+
+% no navigation
+\beamertemplatenavigationsymbolsempty
+
+% slide numbers
+\setbeamertemplate{footline}
+{
+  \hbox{\begin{beamercolorbox}[wd=1\paperwidth,ht=5.25ex,dp=4ex,right]{framenumber}%
+      \large \insertframenumber{}~~
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% centered titles
+\makeatletter
+\long\def\beamer@@frametitle[#1]#2{%
+  \beamer@ifempty{#2}{}{%
+    \gdef\insertframetitle{\centering{#2\ifnum\beamer@autobreakcount>0\relax{}\space\usebeamertemplate*{frametitle continuation}\fi}}%
+  \gdef\beamer@frametitle{#2}%
+  \gdef\beamer@shortframetitle{#1}%
+}%
+}
+\makeatother
+
+%%%%% Equations
+
+\newcounter{mytn}
+\makeatletter
+\newcommand{\tmn}[3][]{\stepcounter{mytn}%
+\tikzmarknode[Col\the\numexpr\value{mytn}-\mytn@start\relax/.try,inner xsep=2pt,%
+minimum height=1.6em,inner sep=2mm,#1]{mytn-\number\value{mytn}}{#2}%
+\expandafter\gdef\csname tmn@annot@\number\value{mytn}\endcsname{#3}}
+\newenvironment{AnnotatedEquation}{\edef\mytn@start{\number\value{mytn}}%
+\begin{equation*}}{\end{equation*}%
+\edef\mytn@end{\number\value{mytn}}%
+\ifnum\mytn@end>\mytn@start
+\begin{itemize}
+ \foreach \X in {\the\numexpr\mytn@start+1,...,\mytn@end}
+ {\item \tikzmarknode{mytn-annot-\X}{\csname tmn@annot@\X\endcsname}%
+   \begin{tikzpicture}[overlay,remember picture]
+  \draw[-stealth] (mytn-annot-\X.east) to[out=0,in=-90] (mytn-\X.south);
+ \end{tikzpicture}}
+\end{itemize}
+\fi}
+\makeatother
+\tikzset{ Col1/.style= {fill=blue!20,anchor=base,rounded corners=2pt},
+Col2/.style= {Col1, fill=red!20},
+Col3/.style= {Col1, fill=green!20},
+Col4/.style= {Col1, fill=yellow!20},
+}
+
+%%%%% INFORMATION
+
+\title{Fairness Certificates for Differentially Private Classification}
+\author{
+  \textbf{Paul Mangold}, Michaël Perrot, Aurélien Bellet, Marc Tommasi
+  \\[1em]
+  \vspace{-1em}
+}
+\titlegraphic{
+  \vspace{-1em}
+  \includegraphics[height=1.3cm]{logos/logo_inria.pdf}\hspace*{2.75cm}~%
+  \includegraphics[height=1.5cm]{logos/logo_lille.pdf}
+  \vspace{-2em}
+}
+\date{December 1, 2022}
+
+%%%%% DOCUMENT
+
+\begin{document}
+
+%% TITLE PAGE
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+\addtocounter{framenumber}{-1}
+
+
+\begin{frame}{Binary Classification}
+  We have
+  \begin{AnnotatedEquation}
+    \tmn{\cX}{features}
+    \times
+    \tmn{\cS}{sensitive attribute}
+    ~~~\rightarrow~~~
+    \tmn{\{-1, 1\}}{binary labels}
+  \end{AnnotatedEquation}
+
+  \pause
+
+  \textbf{Goal:} learn a decision function $h \in \cH: \cX \rightarrow \RR$.
+
+  \pause
+
+  $\quad \rightarrow$ then classify $x \in \cX$ as $\hat y = \sign{h(x)}$.
+\end{frame}
+
+\begin{frame}{Group Fairness}
+  Fairness of $h$ for group $k$ (e.g. equality of opportunity):
+
+  \begin{AnnotatedEquation}
+    \! \! \! \!\!\!
+    F_k(h) \!=\! \prob(h(X) \!<\! 0 \!\mid\! Y=1, S=k) - \prob(h(X) \!<\! 0 \!\mid\! Y=1)
+    \enspace,
+  \end{AnnotatedEquation}
+
+  \vspace{-0.5em}
+
+  where probability is over $X, S, Y$.
+\end{frame}
+
+\begin{frame}{Difference in Fairness}
+  For two decision functions $h, h' \in \cH$:
+  \begin{align*}
+    & \abs{F_k(h) - F_k(h')} \\[0.5em]
+    \Pause
+    & = \Big|
+      \prob({\color{purple} h(X)} \!<\! 0 \!\mid\! Y=1, S=k) - \prob({\color{purple} h(X)} \!<\! 0 \!\mid\! Y=1) \\
+    & \quad   - (\prob({\color{darkspringgreen}  h'(X)} \!<\! 0 \!\mid\! Y=1, S=k) - \prob({\color{darkspringgreen} h'(X)} \!<\! 0 \!\mid\! Y=1))\Big| \\[0.5em]
+    \Pause
+    & \le \Big|
+      \prob({\color{purple} h(X)} \!<\! 0 \!\mid\! Y=1, S=k)
+    - \prob({\color{darkspringgreen} h'(X)} \!<\! 0 \!\mid\! Y=1, S=k) \Big| \\
+    & \quad  + \Big| \prob({\color{purple} h(X)} \!<\! 0 \!\mid\! Y=1)
+      - \prob({\color{darkspringgreen} h'(X)} \!<\! 0 \!\mid\! Y=1)\Big|
+      \enspace.
+  \end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Probability of Negative Decision is Lipschitz}
+
+  We show that for $h, h' \subseteq \cH$, and event $E$,
+  {
+  \begin{AnnotatedEquation}
+    \!\!\!\!\!\!\!
+    \Big| \prob(h(X) < 0 \mid E) - \prob(h'(X) < 0 \mid E) \Big|
+    \le \tmn{\expect \left( \tfrac{1}{\abs{h(x)}}\middle| E \right)}
+    {\normalsize data distribution dependent term}
+    \tmn{L}
+    {\normalsize uniform Lipschitz constant on $\cH$}
+    \norm{h - h'}_{\cH}
+    \enspace.
+  \end{AnnotatedEquation}
+  }
+
+\end{frame}
+
+\begin{frame}{The Same Inequality for Group Fairness}
+  For $h, h' \in \cH$
+  \begin{align*}
+    \abs{F_k({\color{purple}h}) - F_k({\color{darkspringgreen}h'})}
+    & \le
+      \begin{cases}
+        L \cdot \chi_k({\color{purple} h})
+        \norm{{\color{purple}h} - {\color{darkspringgreen} h'}}_{\cH} \\[1em]
+        L \cdot \chi_k({\color{darkspringgreen}h'})
+        \norm{{\color{purple}h} - {\color{darkspringgreen} h'}}_{\cH}
+      \end{cases}
+  \end{align*}
+  \pause
+
+  Where~%
+  $\chi_k(h) = \expect \left( \tfrac{1}{\abs{h(X)}}
+    \middle| Y=1, S=k \right) + \expect \left( \tfrac{1}{\abs{h(X)}}
+    \middle| Y=1 \right) $.
+\end{frame}
+
+\begin{frame}{Application Private ML}
+  We learn by minimizing a strongly-convex loss:
+  \begin{AnnotatedEquation}
+    h^* \in \argmin_{h\in\cH} \frac{1}{n} \sum_{i=1}^n \ell(h(x_i),y_i)
+    \enspace,
+  \end{AnnotatedEquation}
+  and release $(\epsilon,\delta)$-differentially private approximation
+  $h^{\text{priv}}$.
+
+  \pause
+
+  For output perturbation/DP-SGD, w.h.p.:
+  $\norm{h^{\text{priv}} - h^*} = O\left( \frac{\sqrt{p}}{n\epsilon}
+  \right)$.
+\end{frame}
+
+\begin{frame}{Loss of group fairness due to privacy}
+  Difference of fairness also decreases in
+  $O\Big(\frac{\sqrt{p}}{n\epsilon}\Big)$:
+  \begin{AnnotatedEquation}
+    \abs{F_k(h^{\text{priv}}) - F_k(h^*)}
+     = O\left(
+      \tmn{L \cdot \chi_k(h^{\text{priv}})}{due to fairness's pointwise Lipschitzness}
+    \tmn{\frac
+    { \sqrt{p} }
+    {n\epsilon}}{error due to privacy}
+    \right)
+    \enspace.
+  \end{AnnotatedEquation}
+  Where~%
+  $\chi_k(h) = \expect \left( \tfrac{1}{\abs{h(X)}}
+    \middle| Y=1, S=k \right) + \expect \left( \tfrac{1}{\abs{h(X)}}
+    \middle| Y=1 \right) $.
+\end{frame}
+
+\begin{frame}{Wrap-up}{}
+  {\large
+    The ``loss of fairness'' due to privacy vanishes!
+    }
+  \pause
+  \begin{itemize}
+  \item Conditional probability of negative decisions is pointwise Lipschitz.
+    \vspace{1em}
+    \pause
+  \item Many group fairness measures are pointwise Lipschitz.
+    \vspace{0.5em}
+    \pause
+  \item Distance between private and optimal model's group fairness
+    levels decreases in $O\Big(\frac{\sqrt{p}}{n\epsilon}\Big)$.
+  \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{}
+  \begin{minipage}[t][\arraycolsep][t]{0.75\linewidth}
+    {\LARGE Thank you!}
+
+    \vspace{1em}
+
+    ~~~~For more details, paper online:
+
+    ~~~~~~~~\url{https://arxiv.org/abs/2210.16242}
+  \end{minipage}%
+  \begin{minipage}{0.25\linewidth}
+    \vspace{4em}
+    \includegraphics[width=\linewidth]{img/arxivfairnessprivacy.png}
+  \end{minipage}
+\end{frame}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

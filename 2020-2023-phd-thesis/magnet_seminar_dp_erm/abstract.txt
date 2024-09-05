@@ -1,0 +1,14 @@
+Differentially Private Empirical Risk Minimization
+
+Empirical Risk Minimization (ERM) is central in supervised machine learning problems, as it allows finding a model that best explains observed data points.
+The problem is generally solved using gradient-based optimization algorithms: (stochastic) gradient descent, coordinate descent among others.
+However, these algorithms crucially rely on sensitive data for learning good quality models.
+
+This can raise major privacy concerns, as models learned through ERM can leak good amounts of sensitive data.
+To avoid such issues, an additional differential privacy constraint can be added to the ERM problem, ensuring that almost (and quantifiably) no sensitive data is leaked.
+These constraints of course impacts the accuracy of the learned models, inducing a trade-off between achievable accuracy (utility) and differential privacy guarantees.
+
+Numerous works have tackled this problem, notably showing that under given privacy constraints, one can not get arbitrarily good utility guarantees.
+These works generally rely on stochastic gradients descent algorithms, that add noise to satisfy the privacy requirements.
+We will present differential privacy and its application to ERM, giving an overview of existing algorithms for solving this problem, and discuss important practical challenges that come up in their actual implementations.
+Then, we present ongoing work on a differentially private variant of coordinate descent methods, and compare it with existing methods.

@@ -1,0 +1,894 @@
+\documentclass{beamer}
+
+%\usepackage[french]{babel}
+\usepackage{beamerthemepamango}
+
+\addbibresource{references.bib}
+% \usepackage{natbib}
+\usepackage{xcolor}
+%\bibliography{ref.bib}
+
+% figures
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+
+% better references
+\usepackage{cleveref}
+
+% align overset
+\usepackage{aligned-overset}
+
+% algorithms
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+% table
+\usepackage{makecell}
+
+% figures
+\usepackage{caption}
+\usepackage{subcaption}
+
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\expec}[2]{\mathbb E_{#1} \hspace{-0.29em} \left[ #2 \right]}
+
+\newcommand{\norm}[1]{\left \lVert #1 \right \rVert}
+\newcommand{\normin}[1]{\lVert #1 \rVert}
+\newcommand{\scalar}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\abs}[1]{\left| #1 \right|}
+
+
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\median}{Med}
+\DeclareMathOperator{\MAD}{MAD}
+\DeclareMathOperator{\Card}{Card}
+\DeclareMathOperator{\rg}{rg}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\corr}{corr}
+\DeclareMathOperator{\cov}{cov}
+\DeclareMathOperator{\var}{var}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov} % \def\Cov{\mathop{\rm Cov}\nolimits}
+\DeclareMathOperator{\pred}{pred}
+\DeclareMathOperator{\Id}{Id}
+\DeclareMathOperator{\pen}{pen}
+\DeclareMathOperator{\vect}{vect}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\prox}{prox}
+\DeclareMathOperator{\rang}{rang}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\diam}{diam}
+\DeclareMathOperator{\card}{card}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\title{Minimisation privée du risque empirique par descente par coordonnées}
+\author[Paul Mangold et al.]{\small Paul Mangold\textsuperscript{1}, Aurélien Bellet\textsuperscript{1}, Joseph Salmon\textsuperscript{2}, Marc Tommasi\textsuperscript{1}}
+\institute{\scriptsize
+  ${}^1$Univ. Lille, Inria, CNRS, Centrale Lille, UMR 9189 - CRIStAL, F-59000 Lille,\\
+  ${}^2$IMAG, Univ. Montpellier, CNRS Montpellier, France
+}
+\date{CAp 2021\\[0.5em] June 15th, 2021}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \maketitle
+
+  \vspace{-3em}
+
+  \begin{center}
+    \includegraphics[height=2em]{logos/logo_inria.pdf}
+    \qquad\qquad
+    \includegraphics[height=2em]{logos/logo_lille.pdf} %placeholder.jpg}
+    \qquad\qquad
+    \includegraphics[height=2.5em]{logos/logo_umontpellier.eps}
+  \end{center}
+\end{frame}
+
+% -------------------------------------------------------------------------------
+\section{Introduction}
+
+\subsection{Machine Learning Uses Data}
+
+\begin{frame}
+  \begin{itemize}
+  \item
+    ML models are trained on \alert{sensitive data}.
+
+  \item
+    In classical training procedures:
+  \end{itemize}
+
+  % \psellipse(<centerX, centerY>)(<semi-major-length, semi-minor-length>)
+
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+      \foreach \h in {0, 0.5, 1} {
+        \draw[fill=headerlinepale] (1.5, \h) ellipse (1.5 and 0.5);
+        \draw[fill=headerlinepale] (0, \h) rectangle ++(3,0.5);
+        \draw[draw=headerlinepale] (0.01, \h) rectangle ++(2.97,0.01);
+      }
+      \draw[fill=headerlinepale] (1.5, 1.5) ellipse (1.5 and 0.5);
+      \draw (1.5, 1.5) node {sensitive data};
+
+      \draw [->,line width=1pt](3.5,0.75) -- (5.5, 0.75);
+      \draw (4.5, 1.125) node[align=center,font=\tiny] {non-private \\ \tiny training};
+
+      \draw[pattern=north west lines, pattern color=headerlinepale] (5.75,0) rectangle ++(2,1.5);
+      \draw (6.75, 0.75) node[align=center] {trained \\ model};
+
+      \pause
+      \draw[->,dash dot,line width=1pt] (8, 0.75) to[out=0,in=90,looseness=1] (9.25, -0.25) ;
+      \draw (9.25, -0.85) node[align=center] {\alert{leaked} \\ \alert{data records}};
+
+      \pause
+      \draw (9.25, -0.85) node[scale=2,sloped,rotate=45]{\Huge$|$}
+      node[scale=2,rotate=-45]{\Huge$|$};;
+
+      \draw[dash dot,draw=byzantium,line width=1pt] (4.5, 1.125) ellipse (1 and 0.5);
+      \draw[->,line width=1pt,draw=byzantium] (4.5, -0.9) -- (4.5, 0.5);
+      \draw (4.5, -1.5) node[align=center,text=byzantium,font=\bfseries] {how to make \\ this private?};
+
+      \onslide<1-> % dirty fix to display footline on all slides
+    \end{tikzpicture}
+
+    \longcite{shokri2017Membership}
+  \end{figure}
+\end{frame}
+
+
+% \subsection{What Private Means?}
+
+% \begin{frame}
+
+%   % eye image : https://uxwing.com/eye-icon/
+%   Take two databases \alert{differing on one element}:
+
+%   \vspace{-2em}
+
+%   \begin{figure}[H]
+%     \centering
+%     \begin{tikzpicture}
+%       \draw[fill=byzantium!50] (1.5, 0) ellipse (1.5 and 0.5);
+%       \draw[fill=byzantium!50] (0, 0) rectangle ++(3,0.5);
+%       \draw[draw=byzantium!50] (0.01, 0) rectangle ++(2.97,0.01);
+%       \draw[pattern=north west lines,draw=none] (1.5, 0) ellipse (1.5 and 0.5);
+%       \draw[pattern=north west lines,draw=none] (0, 0) rectangle ++(3,0.5);
+
+%       \foreach \h in {0.5, 1} {
+%         \draw[fill=headerlinepale] (1.5, \h) ellipse (1.5 and 0.5);
+%         \draw[fill=headerlinepale] (0, \h) rectangle ++(3,0.5);
+%         \draw[draw=headerlinepale] (0.01, \h) rectangle ++(2.97,0.01);
+%       }
+%       \draw[fill=headerlinepale] (1.5, 1.5) ellipse (1.5 and 0.5);
+
+%       \foreach \h in {3, 3.5, 4} {
+%         \draw[fill=headerlinepale] (1.5, \h) ellipse (1.5 and 0.5);
+%         \draw[fill=headerlinepale] (0, \h) rectangle ++(3,0.5);
+%         \draw[draw=headerlinepale] (0.01, \h) rectangle ++(2.97,0.01);
+%       }
+%       \draw[fill=headerlinepale] (1.5, 4.5) ellipse (1.5 and 0.5);
+
+%       \pause
+
+%       \draw [->,line width=1pt](3.5,3.75) to[out=0,in=90] (6.75, 3);
+%       \draw [->,line width=1pt](3.5,0.75) to[out=0,in=-90] (6.75, 1.5);
+%       \draw (5.25, 0.35) node[align=center,text=byzantium,font=\tiny] {private training};
+%       \draw (5.25, 4.15) node[align=center,text=byzantium,font=\tiny] {private training};
+
+%       \draw[pattern=north west lines, pattern color=headerlinepale] (5.25,1.5) rectangle ++(3,1.5);
+%       \draw (6.75, 2.25) node[align=center] {similar trained \\ models};
+
+%       \pause
+%       \draw[->,dash dot,line width=1pt] (8.25, 2.25) to[out=0,in=90,looseness=1] (9.25, 0.75) ;
+%       \draw (9.5, 2.25) node[align=center] {\includegraphics[width=1cm]{images/eye.pdf}};
+%       \draw (9.25, 0.2) node[align=center]
+%       {observer cannot \alert{really} infer \\ which dataset was used};
+%       \draw[dash dot,draw=amaranth,line width=1pt] (10.175, 0.4) ellipse (0.75 and 0.5);
+
+%       \onslide<1-> % dirty fix to display footline on all slides
+%     \end{tikzpicture}
+%   \end{figure}
+% \end{frame}
+
+\subsection{What Private \alert{Formally} Means?}
+
+\begin{frame}
+
+  \vspace{0.5em}
+
+  \begin{definition}[Differential Privacy]
+    An algorithm $\cA: \cD \rightarrow \cM$ is
+    \alert{$(\epsilon, \delta)$-differentially private} if for all
+    $S \subseteq \cM$ and for all $D, D' \in \cD$ that \alert{differ on
+      at most one element}
+    \begin{align}
+      P(\cA(D) \in S) \le \exp(\epsilon) P(\cA(D') \in S) + \delta,
+    \end{align}
+    where the probability is taken over the coin flips of $\cA$.
+  \end{definition}
+
+  % \vspace{-0.5em}
+
+  % Here think that:
+  % \begin{itemize}
+  % \item \alert{$\exp(\epsilon) \approx 1 + \epsilon$} when $\epsilon$ is small.
+  % \item $\epsilon, \delta$ quantify ``\! how much information can leak\! ''.
+  % \end{itemize}
+
+  % \vspace{-1em}
+
+  \vspace{2em}
+
+  \smalllongcite{dwork2006Differential}
+\end{frame}
+
+%-------------------------------------------------------------------------------
+\section{Background: Private ERM}
+
+\subsection{Private Empirical Risk Minimization}
+
+\begin{frame}
+  Let
+  \begin{itemize}
+  \item $d_1, \dots, d_n \in \cX \times \cY$: data points.
+  \item $h_w : \cX \rightarrow \cY$: hypothesis function parameterized by $w \in \RR^p$.
+  \item $\ell : \cY \times \cY \rightarrow \RR$: loss function.
+  \end{itemize}
+
+  \vspace{1em}
+
+  Goal: find a \alert{$\mathbf(\epsilon, \delta)$-DP approximation} of
+  \begin{align*}
+    w^* = \argmin_{w\in\RR^p} \Bigg\{ f(w) := \frac{1}{n} \sum_{i=1}^n \ell(h_w(x_i); y_i) \Bigg\}.
+  \end{align*}
+
+  \vspace{2em}
+
+  \longcite{chaudhuri2011Differentially}
+
+\end{frame}
+
+\subsection{DP-SGD for DP-ERM: The Algorithm}
+
+% \begin{frame}
+%   \alert{Differentially Private ERM} problem: build an algorithm that
+
+%   \vspace{1em}
+
+%   \begin{itemize}
+
+%   \item
+%     takes $\{d_1, \dots, d_n\}$ as input.
+%   \item
+%     \alert{approximates}
+%     $\displaystyle \hat w^* = \argmin_{w\in\RR^p} \frac{1}{n} \sum_{i=1}^n \ell(w; d_i)$.
+%   \item is \alert{$(\epsilon,\delta)$-differentially-private}.
+%   \end{itemize}
+
+%   \longcite{chaudhuri2011Differentially}
+% \end{frame}
+
+\begin{frame}
+  When $f$ is \alert{convex}: DP-SGD works.
+  % , the problem
+  % \begin{align*}
+  %   \argmin_{w\in\RR^p} f(w;d) := \frac{1}{n} \sum_{i=1}^n \ell(w; d_i)
+  % \end{align*}
+
+  % \vspace{-1em}
+
+  % can be solved with \alert{perturbed (stochastic) gradient descent}:
+  \begin{algorithm}[H]
+    \caption{DP-SGD (essentially).}
+    \textbf{Input}:
+    noise scale $\sigma > 0$;
+    initial point $w^0 \in \mathbb{R}^p$;
+    $T > 0$;
+    data $d$.
+    \begin{algorithmic}[1]
+      \For{$t = 0, \dots, T-1$}
+      \State $w^{t+1} = w^t - \eta_t ( g^t + \text{\alert{$ \boldmath b^t$}} )$
+      with
+      $\begin{cases}
+        \expec{}{g^t} = \nabla f(w^t; d),  \\
+        \text{\alert{$\boldmath  b^t \sim \cN(0, \sigma^2)$}}.
+      \end{cases}$
+      \EndFor
+      \State \textbf{return} $ w^{priv} = w^T$.
+    \end{algorithmic}
+  \end{algorithm}
+
+  (and it works faster when $f$ is \alert{smooth}.)
+
+
+  \longcite{bassily2014Private}
+
+\end{frame}
+
+\subsection{DP-SGD for DP-ERM: Calibrating noise}
+
+\begin{frame}
+  \begin{itemize}
+  \item
+    Gradient \alert{sensitivity}: for all $d, d'$:
+    \begin{align*}
+      \norm{\nabla\ell(\cdot, d) - \nabla\ell(\cdot, d')}_2 \le \Delta_2(\nabla\ell).
+    \end{align*}
+  \end{itemize}
+
+  \vspace{2em}
+
+  \pause
+
+  \begin{theorem}[Privacy Guarantees]
+    For $T > 0$, $\sigma^2 = \frac{8 \Delta_2(\nabla\ell)^2 T \log(1/\delta)}{n^2\epsilon^2}$. \\
+    \begin{center}
+      DP-SGD is $(\epsilon,\delta)$-differentially-private.
+    \end{center}
+  \end{theorem}
+
+  \vspace{1em}
+
+  \longcite{bassily2014Private,wang2018Differentially}
+\end{frame}
+
+\begin{frame}
+  In practice, $\Delta_2(\nabla\ell)$ can be \alert{big} or even \alert{unknown}: clip it!
+  \vspace{1em}
+  \begin{align*}
+    \text{clip}(\nabla \ell, C) =
+    \begin{cases}
+      \nabla\ell(w) & \text{if }\norm{\nabla\ell(w)} \le C, \\
+      \frac{C}{\norm{\nabla\ell(w)}_2} \nabla\ell(w) & \text{otherwise}.
+    \end{cases}
+  \end{align*}
+
+  \vspace{1em}
+
+  Consequently: \alert{$\mathbf{\Delta_2(\nabla\ell) \le 2C}$}.
+
+  \vspace{2em}
+  \smalllongcite{abadi2016Deep}
+\end{frame}
+
+% \begin{frame}
+
+%   \begin{theorem}[Utility Guarantees]
+%     DP-SGD with descreasing step-sizes (differentiable functions)
+
+%     DP-SVRG with constant step size achieve (smooth functions)
+
+%     achieve:
+%     \begin{itemize}
+%     \item
+%       if $\ell$ is \alert{convex} and $\norm{w^0 - w^*} \le R_2$,
+%       \begin{align*}
+%         f(w^{priv}) - f(w^*)
+%         = O \left( \frac{\Delta_2(\nabla f) R_2 \sqrt{p\log(1/\delta)}}{n \epsilon} \right).
+%       \end{align*}
+
+%     \item
+%       if $\ell$ is \alert{$\mu$-strongly-convex},
+%       \begin{align*}
+%         f(w^{priv}) - f(w^*)
+%         = O \left( \frac{\Delta_2(\nabla f)^2 p\log(1/\delta)}{\mu n^2 \epsilon^2} \right).
+%       \end{align*}
+%     \end{itemize}
+%   \end{theorem}
+% \end{frame}
+
+\subsection{DP-SGD for DP-ERM: Convergence?}
+
+\begin{frame}
+
+  Measure utility as $\expec{}{f(w_{priv}) - f(w^*)}$, for which we know:
+  \begin{itemize}
+  \item A \alert{lower bound}: it can not be arbitrarily small.
+  \item An \alert{upper bound}: DP-SGD is (nearly) optimal.
+  \end{itemize}
+
+%  There are \alert{utility guarantees}, and they are \alert{essentially tight}.
+  \vspace{3em}
+
+  \longcite{bassily2014Private}
+
+\end{frame}
+
+\subsection{Drawbacks of DP-SGD}
+
+\begin{frame}
+
+  If DP-SGD is optimal, why look further?
+
+  \pause
+
+  Well, in DP-SGD:
+  \begin{itemize}
+  \item \alert{Unique} learning rate for all coordinates.
+  \item \alert{Global} sensitivity.
+  \end{itemize}
+
+  \pause
+
+  \vspace{2em}
+
+  $\rightarrow$ We hope for better utility with \alert{coordinate methods}.
+
+
+
+  % Other approaches for DP-ERM include
+  % \begin{itemize}
+  %   % \item stochastic gradient descent methods \cite{bassily2014Private,wang2018Differentially}.
+  % \item Frank-Wolfe methods under polytope constraints \cite{talwar2015Nearly}.
+  %   \longcite{talwar2015Nearly}
+  % \item dual coordinate descent for GLM \cite{damaskinos2020Differentially}.
+  %   \longcite{damaskinos2020Differentially}
+  % \end{itemize}
+\end{frame}
+
+%-------------------------------------------------------------------------------
+\section{Our Algorithm: Private Coordinate Descent}
+
+% \subsection{Regularity Assumptions}
+
+% \begin{frame}
+
+%   For $M_1, \dots, M_p > 0$, $w \in \mathbb{R}^p$,
+%     \begin{align}
+%       \| w \|_{M}^2 = \sum_{j=1}^p M_j w_j^2.
+%     \end{align}
+
+%     We assume that the loss function $\ell$ is
+%     \begin{itemize}
+%     \item \alert{convex}:
+%       for $\theta, \tau \in \mathbb{R}^p$,
+%       $\ell(\theta) \ge \ell(\tau) + \langle \nabla \ell(\tau), \theta - \tau \rangle$.
+%     \item \alert{\boldmath $\mu_M$-strongly-convex}
+%       for $\theta, \tau \in \mathbb{R}^p$,
+%       $\ell(\theta)
+%       \ge \ell(\tau) + \langle \nabla \ell(\tau), \theta - \tau \rangle
+%       + \frac{\mu_M}{2} \norm{\theta - \tau}_M^2$.
+%     \item \alert{\boldmath $M$-component-smooth:}
+%       for $\theta, \tau \in \mathbb{R}^p$.
+%       $\ell(\theta)
+%       \le \ell(\tau) + \langle \nabla \ell(\tau), \theta - \tau \rangle
+%       + \frac{1}{2} \norm{\theta - \tau}_M^2$.
+%     \end{itemize}
+% \end{frame}
+
+\subsection{The Algorithm}
+
+\begin{frame}
+  \begin{algorithm}[H]
+    \caption{DP-CD.}
+    \label{algo:dp-cd}
+    \textbf{Input}:
+    noise scales $\sigma_1,\dots,\sigma_p > 0$;
+    learning rates $\eta_1,\dots,\eta_p > 0$;
+    initial point $\bar w^0 = w^0 \in \mathbb{R}^p$;
+    $T, K > 0$
+    \begin{algorithmic}
+      \For{$t = 0, \dots, T-1$}
+      \State Set $\theta^0 = \bar w^t$
+      \For{$k = 0, \dots, K-1$}
+      \State Pick $j$ from $\{1, \dots, p\}$ uniformly at random and update:
+      \State%
+      \vspace{-1em}
+      \begin{align*}
+        \theta^{k+1} =
+        \begin{cases}
+          \theta_{j'}^{k} & \text{ for } j' \neq j, \\
+          \theta_{j}^{k} - \eta_j (\nabla_j f(\theta^k) + \text{\alert{$b^t$}})
+          & \text{with \alert{$b_j \sim \mathcal N(0, \sigma_j^2)$}}
+        \end{cases}
+      \end{align*}
+      \EndFor
+      \State Average $\bar w_{t+1} = \frac 1K \sum_{k=1}^K \theta^k$.
+      \EndFor
+      \State \textbf{return} $ w_{priv} = \bar w_T$
+    \end{algorithmic}
+  \end{algorithm}
+\end{frame}
+  % \begin{algorithm}[H]
+  %   \caption{DP-CD (essentially).}
+  %   \label{algo:dp-cd}
+ %              \textbf{Input}:
+ %              noise scales $\sigma_1,\dots,\sigma_p > 0$;
+ %              learning rates $\eta_1,\dots,\eta_p > 0$;
+ %              initial point $\bar w^0 = w^0 \in \mathbb{R}^p$;
+ %              $T > 0$
+ %              \begin{algorithmic}
+ %                \For{$t = 0, \dots, T-1$}
+ %                % \State Set $w^0 = \bar w^t$
+ %                % \For{$k = 0, \dots, K-1$}
+ %                \State Pick $j$ from $\{1, \dots, p\}$ uniformly at random and update:
+ %                \State Set $w^{t+1} = w^{t}$
+ %                \State Update $w_j^{t+1} =  w_{j}^{t} - \eta_j (\nabla_j f(w^t) + \text{\alert{$b_j^t$}})$ with \alert{$b_j^t \sim \mathcal N(0, \sigma_j^2)$}
+ %                % \EndFor
+ %                % \State Average \alert{$\bar w_{t+1} = \frac 1T \sum_{t=1}^T w^t$}
+ %                \EndFor
+ %                \State \textbf{return} $ w_{priv} = w_T$
+ %              \end{algorithmic}
+ %            \end{algorithm}\end{frame}
+
+% \subsection{Challenges}
+
+% \begin{frame}
+%   Several difficulties:
+%   \begin{itemize}
+%   \item Need \alert{$p$ times more} data queries than SGD.
+%   \item Larger coordinate-wise learning rates \alert{also impact the noise}.
+%   \item Clipping values must be set \alert{coordinate-wise}.
+%   \end{itemize}
+% \end{frame}
+
+\subsection{More queries, lower sensitivity}
+\begin{frame}
+  \begin{itemize}
+  \item
+    Coordinate gradient \alert{sensitivity}: for all $d, d'$ and $j$,
+    \begin{align*}
+      \abs{\nabla_j\ell(\cdot, d) - \nabla_j\ell(\cdot, d')} \le \Delta_2(\nabla_j\ell).
+    \end{align*}
+  \end{itemize}
+
+  \vspace{2em}
+
+  \begin{theorem}[Privacy Guarantees]
+    For $T > 0$,
+    $\sigma_j^2 = \frac{8\text{\alert{$\Delta_2(\nabla_j \ell)^2$}} TK \log(1/\delta)}{n^2\epsilon^2}$, \\
+    \begin{center}
+      DP-CD is $(\epsilon,\delta)$-differentially-private.
+    \end{center}
+  \end{theorem}
+
+  \begin{itemize}
+  \item $\Delta_2(\nabla_j \ell)$ can be \alert{much smaller} than $\Delta_2(\nabla \ell)$.
+  \end{itemize}
+\end{frame}
+
+\subsection{Regularity Assumptions}
+
+\begin{frame}
+
+  % For $M_1, \dots, M_p > 0$, $w \in \mathbb{R}^p$,
+
+
+  \begin{overlayarea}{\textwidth}{0.5\textheight}
+    \only<1>{
+    For DP-SGD, smoothness was useful:
+
+    \vspace{1em}
+
+    \begin{itemize}
+    \item \alert{\boldmath $\beta$-smoothness:}
+      for $w, v \in \mathbb{R}^p$.
+      \begin{align*}
+        f(w)
+        \le f(v) + \langle \nabla f(v), w - v \rangle
+        + \frac{\beta}{2} \norm{w - v}_2^2,
+      \end{align*}
+    \end{itemize}
+  }
+  \only<2>{
+    But a finer, \alert{coordinate-wise} measure is:
+
+    \vspace{1em}
+
+    \begin{itemize}
+    \item \alert{\boldmath $M$-component-smoothness:}
+      for $w, v \in \mathbb{R}^p$.
+      \begin{align*}
+        f(w)
+        \le f(v) + \langle \nabla f(v), w - v \rangle
+        + \frac{1}{2} \norm{w - v}_{\text{\alert{$M$}}}^2,
+      \end{align*}
+
+      where $M_j$ are \alert{coordinate-wise} smoothness constants,
+
+      and $\displaystyle \| w \|_{M}^2 = \sum_{j=1}^p M_j w_j^2$.
+    \end{itemize}
+
+
+
+
+    \vspace{3em}
+
+    (Similarly, measure strong convexity w.r.t. $\norm{\cdot}_M$.)
+  }
+  \end{overlayarea}
+
+
+\end{frame}
+
+\subsection{Utility: comparison with DP-SGD}
+
+% \begin{frame}
+%   Define $\displaystyle \Delta_{M^{-1}}(\nabla\ell)^2 = \sum_{j=1}^p \frac{1}{M_j} \Delta_2(\nabla_j \ell)^2$,
+%   $R_M = \norm{w^0 - w^*}_M$.
+
+%   \vspace{1em}
+
+%   \begin{theorem}[Utility of DP-CD]
+%     \begin{itemize}
+%     \item If $\ell$ is \alert{convex}, and $\norm{w_0 - w^*}_M \le R_M$,
+%       \begin{align*}
+%         \mathbb{E}(f(w^{priv}) - f(w^*))
+%         = \widetilde O\bigg(\frac{\Delta_{M^{-1}}(\nabla\ell) R_M \sqrt{p \log(1/\delta)}}{n\epsilon}\bigg).
+%       \end{align*}
+%     \item If $\ell$ is \alert{\boldmath $\mu_M$-strongly convex w.r.t. $\norm{\cdot}_M$},
+%       \begin{align*}
+%         \mathbb{E}(f(w^{priv}) - f(w^*))
+%         = \widetilde O\left(\frac{\Delta_{M^{-1}}(\nabla \ell)^2 p \log(1/\delta)}{\mu_M n^2 \epsilon^2} \right).
+%       \end{align*}
+%     \end{itemize}
+%   \end{theorem}
+% \end{frame}
+
+%-------------------------------------------------------------------------------
+%\subsection{Comparison with DP-SGD}
+%\subsection{General Comparison}
+
+\begin{frame}
+  Bounds on $\expec{}{f(w_{priv}) - f(w^*)}$ are:
+  \vspace{-1em}
+  \only<1>{
+    \begin{table}[t]
+      \centering
+      \renewcommand{\arraystretch}{2}
+      \begin{tabular}{c c c c}
+        \hline \\[-2.8em]
+        $f$ is... & Convex
+        & Strongly-convex \\
+        \hline
+        DP-CD
+                  & $\widetilde O\left(\frac{\sqrt{p \log(1/\delta)}}{n\epsilon} {\color{color1}{\Delta_{M^{-1}}(\nabla \ell)}} {\color{color2}{R_{M}}}\right)$
+        & $\widetilde O\left(\frac{p \log(1/\delta)}{n^2\epsilon^2} \frac{\color{color1}{\Delta_{M^{-1}}(\nabla\ell)^2}}{ {\color{color3}{\mu_{M}}}} \right)$\\
+        \hline
+        \makecell{DP-SGD \\ DP-SVRG}
+                  & $\widetilde O\left(\frac{\sqrt{p \log(1/\delta)}}{n\epsilon} {\color{color1}{\Delta_{2}(\nabla \ell)}} {\color{color2}{R_{2}}}\right)$
+        & $\widetilde O\left(\frac{p \log(1/\delta)}{n^2\epsilon^2} \frac{\color{color1}{\Delta_{2}(\nabla\ell)^2}}{ {\color{color3}{\mu_{2}}}} \right)$\\
+        % & $\widetilde O\left(\frac{p \log(1/\delta)  \color{color1}{\Delta_2(\nabla \ell)^2} }{ {\color{color3}{\mu_2}} n^2 \epsilon^2}\right)$ \\
+        \hline
+      \end{tabular}
+    \end{table}
+  }
+  \only<2>{
+    \begin{table}[t]
+      \centering
+      \renewcommand{\arraystretch}{2}
+      \begin{tabular}{c c c}
+        \hline \\[-2.8em]
+        $f$ is... & Convex\\
+        \hline
+        DP-CD
+                  & $\widetilde O\left(\frac{\sqrt{p \log(1/\delta)}}{n\epsilon} {\color{color1}{\Delta_{M^{-1}}(\nabla \ell)}} {\color{color2}{R_{M}}}\right)$ \\
+        \hline
+        \makecell{DP-SGD \\ DP-SVRG}
+                  & $\widetilde O\left(\frac{\sqrt{p \log(1/\delta)}}{n\epsilon} {\color{color1}{\Delta_{2}(\nabla \ell)}} {\color{color2}{R_{2}}}\right)$ \\
+        \hline
+      \end{tabular}
+    \end{table}
+  }
+
+  Where:
+  {\small
+    \begin{itemize}
+    \item {\color{color1} $\Delta_{M^{-1}}(\nabla\ell)^2 = \sum_{j=1}^p \frac{1}{M_j} \Delta_2(\nabla_j \ell)^2$}.
+    \item {\color{color2} $R_M = \norm{w^0 - w^*}_M$, $R_2 = \norm{w^0 - w^*}_2$}.
+      \only<1>{
+      \item {\color{color3} $\mu_2$ (resp. $\mu_M$) strong convexity parameters w.r.t. $\norm{\cdot}_2$ (resp. $\norm{\cdot}_M$)}.}
+    \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}
+  So we compare ${\color{color1}{\Delta_{M^{-1}}(\nabla \ell)}} {\color{color2}{R_{M}}}$
+  with ${\color{color1}{\Delta_{2}(\nabla \ell)}} {\color{color2}{R_{2}}}$
+
+  \vspace{1em}
+
+  \begin{itemize}
+    \setlength{\itemsep}{2em}
+    \only<1>{
+  \item If $M_j$'s are equal: % is constant in $j$ and $L_j = \frac{\cL}{\sqrt{p}}$ for all $j$:
+    \begin{align*}
+      1
+      \le \frac{{\color{color1}{\Delta_{M^{-1}}(\nabla \ell)}} {\color{color2}{R_{M}}}}{{\color{color1}{\Delta_{2}(\nabla \ell)}} {\color{color2}{R_{2}}}}
+      \le p.
+    \end{align*}
+  }
+  \only<2>{
+  \item If $M_j$ dominates $M_{j\neq 1}$ and
+    $|w_1^0 - w_1^*| \le |w_j^0 - w_j^*|$:
+    \begin{align*}
+      \frac{{\color{color1}{\Delta_{M^{-1}}(\nabla \ell)}} {\color{color2}{R_{M}}}}{{\color{color1}{\Delta_{2}(\nabla \ell)}} {\color{color2}{R_{2}}}}
+      \le \frac{1}{p}.
+    \end{align*}
+    }
+  \end{itemize}
+
+  \vspace{2em}
+
+  \only<1>{
+    $\rightarrow$ DP-CD \alert{is up to $p$ times worse} than DP-SGD.
+  }
+  \only<2>{
+    $\rightarrow$ DP-CD \alert{is up to $p$ times better} than DP-SGD.
+  }
+
+\end{frame}
+
+% -------------------------------------------------------------------------------
+\section{Experiments: Linear Regression}
+
+\begin{frame}
+  \renewcommand\thesubfigure{\roman{subfigure}}
+  \only<1>{
+    \begin{figure}[H]
+      \centering
+      \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/reglin_lognormal_none.pdf}
+      \end{subfigure}
+      \hfill
+      \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/reglin_lognormal_none_spec.pdf}
+      \end{subfigure}
+    \end{figure}
+  }
+  \only<2>{
+    \begin{figure}[H]
+      \centering
+      \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/reglin_balanced_none.pdf}
+      \end{subfigure}
+      \hfill
+      \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/reglin_balanced_none_spec.pdf}
+      \end{subfigure}
+    \end{figure}
+  }
+  \only<3>{
+    \begin{figure}[H]
+      \centering
+      \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/reglin_firstbig_none.pdf}
+      \end{subfigure}
+      \hfill
+      \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{plots/reglin_firstbig_none_spec.pdf}
+      \end{subfigure}
+    \end{figure}
+  }
+  %   \hfill
+  %   \begin{subfigure}[b]{0.3\textwidth}
+  %     \centering
+  %     \includegraphics[width=\textwidth]{plots/reglin_lognormal_none.pdf}
+  %   \end{subfigure}
+  %   \hfill
+  %   \begin{subfigure}[b]{0.3\textwidth}
+  %     \centering
+  %     \includegraphics[width=\textwidth]{plots/reglin_firstbig_none.pdf}
+  %   \end{subfigure}
+  %   \\
+  %   \hspace{1em}
+  %   \begin{subfigure}[b]{0.3\textwidth}
+  %     \centering
+  %     \includegraphics[width=\textwidth]{plots/reglin_balanced_none_spec.pdf}
+  %   \end{subfigure}
+  %   \hfill
+  %   \begin{subfigure}[b]{0.3\textwidth}
+  %     \centering
+  %     \includegraphics[width=\textwidth]{plots/reglin_lognormal_none_spec.pdf}
+  %   \end{subfigure}
+  %   \hfill
+  %   \begin{subfigure}[b]{0.3\textwidth}
+  %     \centering
+  %     \includegraphics[width=\textwidth]{plots/reglin_firstbig_none_spec.pdf}
+  %   \end{subfigure}
+  % \end{figure}
+
+  Uniform clipping: $C_j \propto \frac{1}{\sqrt{p}}$, \hfill
+  Lipschitz Clipping: $C_j \propto \sqrt{\frac{M_j}{\sum_{j=1}^p M_j}}$.
+
+  \vspace{1em}
+
+  {\small ($n=1000$ samples, $p=10$ features, $\epsilon = 1$, $\delta = 1/n^2$.)}
+
+\end{frame}
+
+% \begin{frame}
+%   \begin{figure}[H]
+%     \begin{subfigure}[b]{0.5\textwidth}
+%       \centering
+%       \includegraphics[width=\textwidth]{plots/reglin_lognormal_none.pdf}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[b]{0.46\textwidth}
+%       \centering
+%       \includegraphics[width=\textwidth]{plots/reglin_lognormal_none_spec.pdf}
+%     \end{subfigure}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}
+%   \begin{figure}[H]
+%     \begin{subfigure}[b]{0.5\textwidth}
+%       \centering
+%       \includegraphics[width=\textwidth]{plots/reglin_pathological_none.pdf}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[b]{0.46\textwidth}
+%       \centering
+%       \includegraphics[width=\textwidth]{plots/reglin_pathological_none_spec.pdf}
+%     \end{subfigure}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}
+%   \begin{figure}[H]
+%     \begin{subfigure}[b]{0.5\textwidth}
+%       \centering
+%       \includegraphics[width=\textwidth]{plots/reglin_firstbig_none.pdf}
+%     \end{subfigure}
+%     \hfill
+%     \begin{subfigure}[b]{0.46\textwidth}
+%       \centering
+%       \includegraphics[width=\textwidth]{plots/reglin_firstbig_none_spec.pdf}
+%     \end{subfigure}
+%   \end{figure}
+
+% \end{frame}
+
+% -------------------------------------------------------------------------------
+\section{Conclusion and Perspectives}
+
+\begin{frame}
+
+  DP-CD:
+  \begin{itemize}
+  \item More queries to the data than DP-SGD.
+  \item Lower sensitivities and larger learning rates.
+  \item Correct clipping appears crucial.
+  \end{itemize}
+
+  \pause
+
+  \vspace{1em}
+
+  Pespectives include:
+  \begin{itemize}
+    \setlength\itemsep{1em}
+  \item \alert{Composite} (non smooth) functions.
+  \item \alert{Adaptive} clipping thresholds.
+  \item \alert{Non-uniform} coordinates sampling.
+  \end{itemize}
+\end{frame}
+
+
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
