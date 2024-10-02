@@ -1,0 +1,16 @@
+\frametitle{Federated Reinforcement Learning for V2X}
+Scenario:
+  \begin{itemize}
+  \item Many vehicles on \textcolor{beamer@blendedblue}{\textbf{different roads}}, pairwise interactions between vehicles\footfullcite{flexe}
+  \end{itemize}
+
+  \vspace{-1.5em}
+
+  \begin{figure}
+    \centering
+    \includegraphics[scale=0.4]{images/grid.png}
+  \end{figure}
+
+
+  \vspace{0.5em}
+

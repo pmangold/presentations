@@ -1,0 +1,53 @@
+    \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,
+  thick,main node/.style={circle,draw,font=\sffamily\Large\bfseries}]
+% nodes 
+    \node[draw,fill=white, align=center, inner sep=5pt] (A1) at (0, 1.5) {agent 1 \\ $s_t^{(1)}$};
+    \node[draw, fill=white, align=center, inner sep=5pt] (B1) at (0, 0) {env 1};
+
+    
+    \node[draw,fill=white, align=center, inner sep=5pt] (A2) at (0, -1.5) {agent 2 \\ $s_t^{(2)}$};
+    \node[draw, fill=white, align=center, inner sep=5pt] (B2) at (0, -3) {env 2};
+
+    \node (dots) at (0, -4) {$\cdots$};
+    
+    \node[draw,fill=white, align=center, inner sep=5pt] (An) at (0, -5.5) {agent n \\ $s_t^{(n)}$};
+    \node[draw, fill=white, align=center, inner sep=5pt] (Bn) at (0, -7) {env n};
+
+
+% arrows
+\draw [->] (B1.west) to [out=180,in=180] (A1.west) ;
+\draw [->] (A1.east) to [out=0,in=0] (B1.east);
+\draw [->] (B2.west) to [out=180,in=180] (A2.west) ;
+\draw [->] (A2.east) to [out=0,in=0] (B2.east);
+\draw [->] (Bn.west) to [out=180,in=180] (An.west) ;
+\draw [->] (An.east) to [out=0,in=0] (Bn.east);
+
+\node[align=center,inner sep=15pt] (A1t) at (-1.7, 0.75) {$r_t^{(1)}$ \\[0.5em] $S_{t+1}^{(1)}$};
+\node[align=center,inner sep=15pt] (B1t) at (1.8, 0.75) {$a_t^{(1)}$};
+\node[align=center,inner sep=15pt] (C1t) at (-4, 0.75) {\includegraphics[width=4em]{images/sedan-car-icon.pdf}};
+
+\node[align=center,inner sep=15pt] (A2t) at (-1.7, -2.25) {$r_t^{(2)}$ \\[0.5em] $S_{t+1}^{(2)}$};
+\node[align=center,inner sep=15pt] (B2t) at (1.8, -2.25) {$a_t^{(2)}$};
+
+\node[align=center,inner sep=15pt] (C2t) at (-4, -2.25) {\includegraphics[width=4em]{images/logistic-van-icon.pdf}};
+
+
+\node[align=center,inner sep=15pt] (Ant) at (-1.7, -6.25) {$r_t^{(n)}$ \\[0.5em] $S_{t+1}^{(n)}$};
+\node[align=center,inner sep=15pt] (Bnt) at (1.8, -6.25) {$a_t^{(n)}$};
+
+\node[align=center,inner sep=15pt] (Cnt) at (-4, -6.25)  {\includegraphics[width=4em]{images/suv-car-icon.pdf}};
+
+\node[fill=white, align=center, inner sep=5pt] (model) at (12, -2.7) {global policy};
+
+\node[draw, fill=white, align=center, inner sep=24pt] (algo) at (7, -2.7) {central server};
+% arrows
+\draw[<->] (B1t) to (algo);
+\draw[<->] (B2t) to (algo);
+\draw[<->] (Bnt) to (algo);
+\draw[->] (algo) to (model);
+
+\end{tikzpicture}   
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "main"
+%%% End:
