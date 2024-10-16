@@ -403,11 +403,11 @@ Col4/.style= {Col1, fill=yellow!20},
   \begin{gather*}
     S_0^c = s, \\
     \only<2,3,4,5>{
-      A_h^c \sim \pi(\cdot | S_t^c),
+      A_t^c \sim \pi(\cdot | S_t^c),
       \\
     }%
     \only<3,4,5>{
-    S_{h+1}^c \sim P^c_{\text{MDP}}(\cdot| S_t^c,A_t^c)
+    S_{t+1}^c \sim P^c_{\text{MDP}}(\cdot| S_t^c,A_t^c)
     }%
   \end{gather*}
 
@@ -760,7 +760,7 @@ Col4/.style= {Col1, fill=yellow!20},
       Receive reward $r_{t,k}$, new state $s_{t,k+1}$ and perform local update:
       
       \begin{center}
-        ~~~~~~$\theta_{t,k} = \theta_{t,k-1}^c - \eta \times \text{TD\_Error}(s_{t,k}, r_{t,k}, a_{t,k}, s_{t,k+1})$
+        ~~~~~~$\theta^c_{t,k} = \theta_{t,k-1}^c - \eta \times \text{TD\_Error}(s_{t,k}, r_{t,k}, a_{t,k}, s_{t,k+1})$
       \end{center}
       
       \vspace{0.5em}
@@ -850,7 +850,7 @@ Col4/.style= {Col1, fill=yellow!20},
       Receive reward $r_{t,k}$, new state $s_{t,k+1}$ and perform local update:
       
       \begin{center}
-        ~~~~~~$\theta_{t,k} = \theta_{t,k-1}^c - \eta \times \Big\{ \text{TD\_Error}(s_{t,k}, r_{t,k}, a_{t,k}, s_{t,k+1}) + \textcolor{beamer@blendedblue}{\mathbf{\xi_t^c}} \Big\}$ 
+        ~~~~~~$\theta^c_{t,k} = \theta_{t,k-1}^c - \eta \times \Big\{ \text{TD\_Error}(s_{t,k}, r_{t,k}, a_{t,k}, s_{t,k+1}) + \textcolor{beamer@blendedblue}{\mathbf{\xi_t^c}} \Big\}$ 
       \end{center}
       
       \vspace{0.5em}
