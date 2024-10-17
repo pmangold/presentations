@@ -157,9 +157,10 @@ Magnet Seminar}
 \end{frame}
 
 
-\begin{frame}{Centralizing in a data center is difficult}
+\begin{frame}[t]{Centralizing in a data center is difficult}
 
   Centralizing data is often impossible
+  \pause
   \begin{itemize}
   \item \emph{Privacy}:
 
@@ -168,6 +169,7 @@ Magnet Seminar}
     }
     \\
     ~
+    \pause
 
   \item \emph{Volume of data}:
 
@@ -176,6 +178,7 @@ Magnet Seminar}
     }
     \\
     ~
+    \pause
     
   \item \emph{Time}:
 
@@ -455,11 +458,18 @@ Magnet Seminar}
   \end{equation*}
   where $A$ and $b$ are known through stochastic estimates $A(Z)$, $b(Z)$
 
-  \vspace{2em}
+  ... variance is typically very large
+
+  \vspace{-0.5em}
+  
+  ... and $A$ is not symmetric
+  
+  \vspace{1em}
 
   \pause
-  
-  Note: It is inefficient to cast it as a minimization problem\\
+
+  \small 
+  Note: It is inefficient to cast it as a minimization problem with loss $\| A \theta_\star - b \|^2$\\
   $\rightarrow$ This requires a different method, with a different analysis
 \end{frame}
 
@@ -476,7 +486,7 @@ Magnet Seminar}
   
 \end{frame}
 
-\begin{frame}{Context, idea on a nice analysis (I) \footfullcite{samsonov2024improved}}
+\begin{frame}{Context, analysis of TD (I) \footfullcite{samsonov2024improved}}
   
   {\tiny
     \begin{algorithmic}
@@ -519,7 +529,7 @@ Magnet Seminar}
 \end{frame}
 
 
-\begin{frame}[t]{Context, idea on a nice analysis (II) \footfullcite{samsonov2024improved}}
+\begin{frame}[t]{Context, analysis of TD (II) \footfullcite{samsonov2024improved}}
 
   \textbf{Stochastic Expansion}
   \begin{align*}
@@ -540,7 +550,7 @@ Magnet Seminar}
 
 
 
-\begin{frame}[t]{Context, idea on a nice analysis (III) \footfullcite{samsonov2024improved}}
+\begin{frame}[t]{Context, analysis of TD (III) \footfullcite{samsonov2024improved}}
 
   \textbf{Stochastic Expansion}
   \begin{align*}
@@ -578,6 +588,8 @@ Magnet Seminar}
     \frac{1}{N} \sum_{c=1}^{N} b^c
   \end{equation}
   \vspace{-1em}
+
+  \pause
   
   \textbf{Assumptions}
 
@@ -600,11 +612,19 @@ Magnet Seminar}
 
 
 \begin{frame}
+  \vspace{6em}
+
   \begin{center}
     \textcolor{beamer@blendedblue}{
       \huge Solving Federated LSA
     }
   \end{center}
+
+  \vspace{3em}
+  
+
+  \small
+  \fullcite{mangold2024scafflsa}
 \end{frame}
 
 
@@ -633,7 +653,7 @@ Magnet Seminar}
     \theta_{t} - \theta_\star
     & =
     \frac{1}{N} \sum_{c=1}^N \Gamma_{t,1:H}^c (\theta_{t-1} - \theta_\star)
-    + \eta \sum_{c=1}^N (\text{Id} - \Gamma_{t,1:H}^c) (\theta_\star^c - \theta_\star)
+    + \frac{1}{N} \sum_{c=1}^N (\text{Id} - \Gamma_{t,1:H}^c) (\theta_\star^c - \theta_\star)
     \\
     & \qquad + \frac{\eta}{N} \sum_{c=1}^N \sum_{h=1}^H \Gamma_{t,h+1:H}^c \varepsilon^c(Z_t^c)
   \end{align*}
@@ -655,7 +675,7 @@ Magnet Seminar}
       (\text{Id} - \bar{\Gamma}_{t,1:H})^{-1} 
       (\text{Id} - (\text{Id}- \eta A^c)^H)\{ \theta_\star^c - \theta_\star \}
   \end{align*}
-  where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N \Gamma_{t,1:H}^c$
+  where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id} - \eta A^c)^H$
 
   \pause
 
@@ -701,16 +721,20 @@ Magnet Seminar}
   To achieve $\mathbb{E} \Big[ \| {\theta_T - \theta_\star} \|^2 \Big] \le \epsilon^2$, we need
   \begin{itemize}
   \item $\frac{\eta \sigma_\star^2}{N a} \le \epsilon^2$ ~~~~~~\,~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $\eta = \frac{N a \epsilon^2}{\sigma_\star^2}$
-  \item $\| \theta_T^{\text{bias}} \|^2 \le \epsilon^2$ ~~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{\sigma_\star^2 }{N \epsilon \mathbb{E}_c[\| \theta_\star - \theta_\star^c \| ]}$
-  \item $(1 - \eta a)^{H t} \| \theta_0 - \theta_\star \|^2 \le \epsilon^2$ ~~~~$\rightarrow$ $T = \frac{\mathbb{E}_c[\| \theta_\star - \theta_\star^c \|]}{a^2 \epsilon} \log \tfrac{\| \theta_0 - \theta_\star \|}{ \epsilon }$
+  \item $\| \theta_T^{\text{bias}} \|^2 \le \epsilon^2$ ~~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{\sigma_\star^2 }{N \epsilon \Delta_{\text{het}}}$
+  \item $(1 - \eta a)^{H t} \| \theta_0 - \theta_\star \|^2 \le \epsilon^2$ ~~~~$\rightarrow$ $T = \frac{\Delta_{\text{het}}}{a^2 \epsilon} \log \tfrac{\| \theta_0 - \theta_\star \|}{ \epsilon }$
   \end{itemize}
+
+  where $\Delta_{\text{het}} = \frac{1}{N} \sum_{c=1}^N \| \theta_\star - \theta_\star^c \| $
 \end{frame}
 
 
-\begin{frame}{Solution: Control variates (SCAFFLSA)\footnote{Extending ideas from on \fullcite{karimireddy2020scaffold}}}
+\begin{frame}{Solution: Control variates (SCAFFLSA)\footnote{Based on \fullcite{karimireddy2020scaffold}}}
 
-  \vspace{-0.5em}
-  
+  \vspace{0.5em}
+
+  \small
+
   \begin{algorithmic}
     \For{$t=0$ to $T-1$}
     \State Initialize $\theta_{t,0} = \theta_t$
@@ -727,8 +751,8 @@ Magnet Seminar}
     \State Aggregate local updates $\theta_{t+1} = \tfrac{1}{N} \sum\nolimits_{c=1}^{N} \theta_{t,H}^c $
     \State Update control variate $\xi_{t+1} = \xi_t - \frac{1}{\eta H} ( \theta_{t+1} - \theta_{t,H}^c )$
     \EndFor
-  \end{algorithmic}    
-  \vspace{.2em}
+  \end{algorithmic}
+  \vspace{1.5em}
 \end{frame}
 
 
@@ -743,7 +767,7 @@ Magnet Seminar}
       +
       \frac{\eta \sigma_\star^2}{N a}
   \end{align*}
-  with $\psi_0 = \| \theta_0 - \theta_\star \|^2 + \eta^2H^2 \mathbb{E}_c[\| A^c( \theta_\star^c - \theta_\star) \|^2]$
+  with $\psi_0 = \| \theta_0 - \theta_\star \|^2 + \frac{\eta^2H^2}{N} \sum_{c=1}^N \| A^c( \theta_\star^c - \theta_\star) \|^2$
 
 
   \vspace{1em}
@@ -786,31 +810,13 @@ Magnet Seminar}
   \begin{itemize}
   \item $\frac{\eta \sigma_\star^2}{N a} \le \epsilon^2$ ~~~~~~\,~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $\eta = \frac{N a \epsilon^2}{\sigma_\star^2}$
   \item $H \le \frac{a}{\eta \max_c \| A^c \|^2}$ ~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{ \sigma_\star^2 }{N \epsilon^2 \max_c \| A^c \|^2}$
-  \item $(1 - \eta a)^{H t} \| \theta_0 - \theta_\star \|^2 \le \epsilon^2$ ~~~~$\rightarrow$ $T = \frac{\max_c \| A^c \|^2}{a^2} \log \tfrac{\| \theta_0 - \theta_\star \|}{ \epsilon }$
+  \item $(1 - \frac{\eta a H}{2})^{t} \psi_0 \le \epsilon^2$ ~~~~~~~~~~~~\,~~$\rightarrow$ $T = \frac{2 \max_c \| A^c \|^2}{a^2} \log \tfrac{\psi_0}{ \epsilon }$
   \end{itemize}
 
   $\rightarrow$ $H \propto 1/N\epsilon^2$ rather than $1/N\epsilon$, and $T$ independent on $\epsilon$
 
 
 \end{frame}
-
-\begin{frame}{Linear Speed-Up}
-  \vspace{-0.5em}
-
-  MSE at stationarity (dotted line is $\propto 1/N$)
-
-  \vspace{-1em}
-  
-  \begin{center}   
-    \includegraphics[width=0.5\linewidth]{images/linear-speedup.pdf}
-    \includegraphics[width=\linewidth]{images/legend.pdf}
-
-    \vspace{-1.5em}
-
-  \end{center}
-
-\end{frame}
-
 
 \begin{frame}
   \vspace{1em}
@@ -873,9 +879,27 @@ Magnet Seminar}
     \\
     \bottomrule
     \end{tabular*}
-    \vspace{2em}
+    \vspace{3em}
 
   \end{frame}
+
+  \begin{frame}{Linear Speed-Up}
+  \vspace{-0.5em}
+
+  MSE at stationarity (dotted line is $\propto 1/N$)
+
+  \vspace{-1em}
+  
+  \begin{center}   
+    \includegraphics[width=0.5\linewidth]{images/linear-speedup.pdf}
+    \includegraphics[width=\linewidth]{images/legend.pdf}
+
+    \vspace{-1.5em}
+
+  \end{center}
+
+\end{frame}
+
   
 %\begin{frame}{Focus: linear speed-up}
   
@@ -933,12 +957,13 @@ Magnet Seminar}
       \node[fill=beamer@blendedblue!10,text=black,inner sep=2em,line width=2pt,draw=beamer@blendedblue] at ([xshift=0cm,yshift=0cm]current page.center){\LARGE What can we say about the bias?};
     }  
 
+    \only<2>{\vspace{-1.8em}}%
     
   \end{frame}
 
 
-  \begin{frame}{For Quadratics}
-    The bias is the same as FedLSA:
+  \begin{frame}{\Large For Quadratics ($f^c(\theta) = (1/2)\theta^\top A^c \theta + b \theta$)}
+    The bias is the same as FedLSA
     \begin{align*}
       \theta_\infty^{\text{bias}}
       & =
@@ -947,7 +972,7 @@ Magnet Seminar}
         (\text{Id} - \bar{\Gamma}_{t,1:H})^{-1} 
         (\text{Id} - (\text{Id}- \eta A^c)^H)\{ \theta_\star^c - \theta_\star \}
     \end{align*}
-    where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N \Gamma_{t,1:H}^c$
+    where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id}- \eta A^c)^H$
 
     \pause
     
@@ -965,7 +990,7 @@ Magnet Seminar}
   \end{frame}
 
   \begin{frame}{In the General Case\\[-0.5em]
-      \small (Strongly convex and smooth functions)}
+      \small (Strongly convex and smooth functions $f^c$)}
 
     Bias is in two parts!
     \begin{align*}
@@ -978,7 +1003,7 @@ Magnet Seminar}
       \\
       & \quad
         + \frac{\eta}{2 N} \nabla f^c(\theta_\star)^{-1} \nabla^3 f(\theta_\star) \textbf{A} \mathcal{C}(\theta_\star)
-        + O(\eta + \eta^2 H^2)
+        + O(\eta^{3/2} + \eta^2 H^2)
     \end{align*}
     \small 
     where:
@@ -986,7 +1011,7 @@ Magnet Seminar}
     \vspace{-1em}
     
     \begin{itemize}
-    \item $\textbf{A} = (I \otimes \nabla^2 f(\theta_\star) + \nabla^2 f(\theta_\star) \otimes I)^{-1}$
+    \item $\textbf{A} = (\text{Id} \otimes \nabla^2 f(\theta_\star) + \nabla^2 f(\theta_\star) \otimes \text{Id})^{-1}$
     \item  $\mathcal{C}(\theta_\star)$ is the gradient's covariance at $\theta_\star$
     \end{itemize}
     
@@ -1051,9 +1076,9 @@ Magnet Seminar}
     \small
     See the paper(s):
 
-    ~~\fullcite{mangold2024scafflsa}
+    \fullcite{mangold2024scafflsa}
 
-    ~~On FedAvg and Richardson-Romberg: soon on arXiv!
+    On FedAvg and Richardson-Romberg: soon on arXiv!
   \end{frame}
 
 
