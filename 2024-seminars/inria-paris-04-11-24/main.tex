@@ -3,6 +3,7 @@
 \usepackage{hyperref}
 \usepackage{biblatex}
 
+
 \usepackage{amsmath}
 \usepackage{bm}
 
@@ -94,13 +95,16 @@ Col4/.style= {Col1, fill=yellow!20},
 
 %%%%% INFORMATION
 
-\title{Taming Heterogeneity in Federated Linear Stochastic Approximation and Federated Learning}
+\title{\LARGE Taming Heterogeneity in Federated Linear Stochastic Approximation and Federated Learning
+\vspace{-0.5em}}
 \author{
   \vspace{-0.5em}
   Paul Mangold\\[0.5em]
   CMAP, École polytechnique, France\\[0.5em]
+  \footnotesize Joint Work with E. Moulines (Polytechnique), S. Samsonov (HSE Russia), S. Labbi (Polytechnique), I. Levin (HSE Russia), R. Alami (TII, UAE), A. Naumov (HSE Russia)
+  \\
   ---------\\
-  \vspace{-1em}
+  \vspace{-2.5em}
 }
 \titlegraphic{
 }
@@ -115,6 +119,7 @@ ARGO Seminar}
 %% TITLE PAGE
 
 \begin{frame}[plain]
+  \vspace{1.5em}
   \titlepage
 \end{frame}
 \addtocounter{framenumber}{-1}
@@ -247,7 +252,7 @@ ARGO Seminar}
       Multiple sub-problems
       \begin{align*}
         \min_{\theta \in \mathbb{R}^d} 
-        \sum_{c=1}^N \mathbb{E}_{x^c, y^c \sim D^c} \Big[ \ell( \theta; x^c, y^c ) \Big]
+        \sum_{c=1}^N \mathbb{E}_{x^c, y^c \sim \mathcal{D}^c} \Big[ \ell( \theta; x^c, y^c ) \Big]
       \end{align*}
       
       $\rightarrow$ but only \emph{one shared solution}
@@ -265,7 +270,7 @@ ARGO Seminar}
     \small
     \begin{align*}
       \min_{\theta \in \mathbb{R}^d}
-      \mathbb{E}_{x^1, y^1 \sim D^1} \Big[ \ell( \theta; x^1, y^1 ) \Big]
+      \mathbb{E}_{x^1, y^1 \sim \mathcal{D}^1} \Big[ \ell( \theta; x^1, y^1 ) \Big]
       \rightarrow
       \theta_\star^1
     \end{align*}
@@ -274,7 +279,7 @@ ARGO Seminar}
     
     \begin{align*}
       \min_{\theta \in \mathbb{R}^d}
-      \mathbb{E}_{x^2, y^2 \sim D^2} \Big[ \ell( \theta; x^2, y^2 ) \Big]
+      \mathbb{E}_{x^2, y^2 \sim \mathcal{D}^2} \Big[ \ell( \theta; x^2, y^2 ) \Big]
       \rightarrow
       \theta_\star^2
     \end{align*}
@@ -289,7 +294,7 @@ ARGO Seminar}
     
     \begin{align*}
       \min_{\theta \in \mathbb{R}^d} 
-      \mathbb{E}_{x^N, y^N \sim D^N} \Big[ \ell( \theta; x^N, y^N ) \Big]
+      \mathbb{E}_{x^N, y^N \sim \mathcal{D}^N} \Big[ \ell( \theta; x^N, y^N ) \Big]
       \rightarrow
       \theta_\star^N
     \end{align*}
@@ -335,7 +340,7 @@ ARGO Seminar}
     \enspace,
     \quad
     \text{ where }
-    f^c(\theta) = \mathbb{E}_{x^c, y^c \sim D^c} \Big[ \ell( \theta; x^c, y^c ) \Big]
+    f^c(\theta) = \mathbb{E}_{x^c, y^c \sim \mathcal{D}^c} \Big[ \ell( \theta; x^c, y^c ) \Big]
   \end{align*}
 
   \pause
@@ -449,24 +454,27 @@ ARGO Seminar}
   \normalsize Special case: only one agent}
   TD (with linear approx.) can be seen as solving a linear system 
   \begin{equation*}
-    A \theta_\star
+    \bar{A} \theta_\star
     = 
-    b
+    \bar{b}
   \end{equation*}
-  where $A$ and $b$ are known through stochastic estimates $A(Z)$, $b(Z)$
+  where $\bar{A}$ and $\bar{b}$ are known through stochastic estimates $A(Z)$, $b(Z)$
+  for a sequence of random variables $Z$
 
-  ... variance is typically very large
+  \vspace{-0.5em}
+
+  ... variance of $A(Z)$ and $b(Z)$ are typically very large
 
   \vspace{-0.5em}
   
-  ... and $A$ is not symmetric
+  ... and $\bar{A}$ is not symmetric
   
-  \vspace{1em}
+  \vspace{0.5em}
 
   \pause
 
   \small 
-  Note: It is inefficient to cast it as a minimization problem with loss $\| A \theta_\star - b \|^2$\\
+  Note: It is inefficient to cast it as a minimization problem with loss $\| \bar{A} \theta_\star - \bar{b} \|^2$ \\
   $\rightarrow$ This requires a different method, with a different analysis
 \end{frame}
 
@@ -512,12 +520,12 @@ ARGO Seminar}
   \begin{itemize}\setlength{\itemindent}{-1em}
     \small
   \item Oracle: i.i.d sequence $Z_{t}$'s such that
-    $\mathbb{E} [A(Z_{t})] = A$, and
-    $\mathbb{E} [b(Z_{t})] = b$
+    $\mathbb{E} [A(Z_{t})] = \bar{A}$, and
+    $\mathbb{E} [b(Z_{t})] = \bar{b}$
     
   \item Exponential stability: $\mathbb{E}[ \| \prod_{t=\ell}^k (\text{Id} - \eta A(Z_t)) \|^2 ] \le (1 - \eta a)^{k-\ell}$ for some $a > 0$
 
-  \item Noise $\varepsilon(Z) = (A(Z) - A) \theta_\star + (b(Z) - b)$ has finite variance $\sigma_\star^2$
+  \item Noise $\varepsilon(Z) = (A(Z) - \bar{A}) \theta_\star + (b(Z) - \bar{b})$ has finite variance $\sigma_\star^2$
   \end{itemize}
 
   \vspace{1em}
@@ -572,7 +580,7 @@ ARGO Seminar}
 
 
 \begin{frame}{Federated LSA}
-  Take $A^c, b^c$ such that $A^c \theta_\star^c = b^c$ for $c = 1 .. N$
+  Take $\bar{A}^c, \bar{b}^c$ such that $\bar{A}^c \theta_\star^c = \bar{b}^c$ for $c = 1 .. N$
 
   \pause
   
@@ -580,9 +588,9 @@ ARGO Seminar}
   \begin{equation}
     \small
     \nonumber
-    \Bigg( \frac{1}{N} \sum_{c=1}^{N} A^c \Bigg) \theta_\star
+    \Bigg( \frac{1}{N} \sum_{c=1}^{N} \bar{A}^c \Bigg) \theta_\star
     = 
-    \frac{1}{N} \sum_{c=1}^{N} b^c
+    \frac{1}{N} \sum_{c=1}^{N} \bar{b}^c
   \end{equation}
   \vspace{-1em}
 
@@ -594,15 +602,15 @@ ARGO Seminar}
   
   \begin{itemize}\setlength{\itemindent}{-1em}
     \small
-  \item $\theta_\star$ and $\theta_\star^c$ are unique, and $A^c$ and $b^c$ are split among $N$ agents
+  \item $\theta_\star$ and $\theta_\star^c$ are unique, and $\bar{A}^c$ and $\bar{b}^c$ are split among $N$ agents
     
   \item Oracle: i.i.d sequence $Z_{t}^c$'s such that
-    $\mathbb{E} [A(Z_{t}^c)] = A^c$, and
-    $\mathbb{E} [b(Z_{t}^c)] = b^c$
+    $\mathbb{E} [A(Z_{t}^c)] = \bar{A}^c$, and
+    $\mathbb{E} [b(Z_{t}^c)] = \bar{b}^c$
     
   \item Exponential stability: $\mathbb{E}[ \| \prod_{t=\ell}^k (\text{Id} - \eta A^c(Z_t^c)) \|^2 ] \le (1 - \eta a)^{k-\ell}$ for $a > 0$
 
-  \item Noise $\varepsilon^c(Z) = (A^c(Z) - A^c) \theta_\star^c + (b^c(Z) - b^c)$ has variance bounded by $\sigma_\star^2$
+  \item Noise $\varepsilon^c(Z) = (A^c(Z) - \bar{A}^c) \theta_\star^c + (b^c(Z) - \bar{b}^c)$ has variance bounded by $\sigma_\star^2$
   \end{itemize}
 
 \end{frame}
@@ -670,9 +678,9 @@ ARGO Seminar}
       \frac{1}{N}
       \sum_{c=1}^N
       (\text{Id} - \bar{\Gamma}_{t,1:H})^{-1} 
-      (\text{Id} - (\text{Id}- \eta A^c)^H)\{ \theta_\star^c - \theta_\star \}
+      (\text{Id} - (\text{Id}- \eta \bar{A}^c)^H)\{ \theta_\star^c - \theta_\star \}
   \end{align*}
-  where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id} - \eta A^c)^H$
+  where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id} - \eta \bar{A}^c)^H$
 
   \pause
 
@@ -719,7 +727,7 @@ ARGO Seminar}
   \begin{itemize}
   \item $\frac{\eta \sigma_\star^2}{N a} \le \epsilon^2$ ~~~~~~\,~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $\eta = \frac{N a \epsilon^2}{\sigma_\star^2}$
   \item $\| \theta_T^{\text{bias}} \|^2 \le \epsilon^2$ ~~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{\sigma_\star^2 }{N \epsilon \Delta_{\text{het}}}$
-  \item $(1 - \eta a)^{H t} \| \theta_0 - \theta_\star \|^2 \le \epsilon^2$ ~~~~$\rightarrow$ $T = \frac{\Delta_{\text{het}}}{a^2 \epsilon} \log \tfrac{\| \theta_0 - \theta_\star \|}{ \epsilon }$
+  \item $(1 - \eta a)^{H T} \| \theta_0 - \theta_\star \|^2 \le \epsilon^2$ ~~~\,$\rightarrow$ $T = \frac{\Delta_{\text{het}}}{a^2 \epsilon} \log \tfrac{\| \theta_0 - \theta_\star \|}{ \epsilon }$
   \end{itemize}
 
   where $\Delta_{\text{het}} = \frac{1}{N} \sum_{c=1}^N \| \theta_\star - \theta_\star^c \| $
@@ -754,7 +762,7 @@ ARGO Seminar}
 
 
 \begin{frame}{Theoretical analysis}
-  We prove, assuming $H \le \frac{a}{\eta \max_c \| A^c \|^2}$
+  We prove, assuming $H \le \frac{a}{\eta \max_c \| \bar{A}^c \|^2}$
   \begin{align*}
     \mathbb{E}[\| \theta_{T} - \theta_\star \|^2]
     & \lesssim{}
@@ -764,7 +772,7 @@ ARGO Seminar}
       +
       \frac{\eta \sigma_\star^2}{N a}
   \end{align*}
-  with $\psi_0 = \| \theta_0 - \theta_\star \|^2 + \frac{\eta^2H^2}{N} \sum_{c=1}^N \| A^c( \theta_\star^c - \theta_\star) \|^2$
+  with $\psi_0 = \| \theta_0 - \theta_\star \|^2 + \frac{\eta^2H^2}{N} \sum_{c=1}^N \| \bar{A}^c( \theta_\star^c - \theta_\star) \|^2$
 
 
   \vspace{1em}
@@ -806,8 +814,8 @@ ARGO Seminar}
   To achieve $\mathbb{E} \Big[ \| {\theta_T - \theta_\star} \|^2 \Big] \le \epsilon^2$, we need
   \begin{itemize}
   \item $\frac{\eta \sigma_\star^2}{N a} \le \epsilon^2$ ~~~~~~\,~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $\eta = \frac{N a \epsilon^2}{\sigma_\star^2}$
-  \item $H \le \frac{a}{\eta \max_c \| A^c \|^2}$ ~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{ \sigma_\star^2 }{N \epsilon^2 \max_c \| A^c \|^2}$
-  \item $(1 - \frac{\eta a H}{2})^{t} \psi_0 \le \epsilon^2$ ~~~~~~~~~~~~\,~~$\rightarrow$ $T = \frac{2 \max_c \| A^c \|^2}{a^2} \log \tfrac{\psi_0}{ \epsilon }$
+  \item $H \le \frac{a}{\eta \max_c \| \bar{A}^c \|^2}$ ~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{ \sigma_\star^2 }{N \epsilon^2 \max_c \| \bar{A}^c \|^2}$
+  \item $(1 - \frac{\eta a H}{2})^{T} \psi_0 \le \epsilon^2$ ~~~~~~~~~~~\,~~$\rightarrow$ $T = \frac{2 \max_c \| \bar{A}^c \|^2}{a^2} \log \tfrac{\psi_0}{ \epsilon }$
   \end{itemize}
 
   $\rightarrow$ $H \propto 1/N\epsilon^2$ rather than $1/N\epsilon$, and $T$ independent on $\epsilon$
@@ -905,11 +913,19 @@ ARGO Seminar}
 
   
   \begin{frame}
+%    \vspace{3em}
+
     \begin{center}
       \textcolor{beamer@blendedblue}{
-        \huge What about Non-Linear?
+        \huge What about the\\[0.5em]
+        \huge Non-Linear Case?
       }
+
+%      \vspace{3em}
+      
     \end{center}
+
+%    \scriptsize Joint work with E. Moulines (Polytechnique), A. Durmus (Polytechnique), A. Dieuleveut (Polytechnique), S. Samsonov (HSE Russia)
   \end{frame}
 
   
@@ -921,7 +937,7 @@ ARGO Seminar}
       \enspace,
       \quad
       \text{ where }
-      f^c(\theta) = \mathbb{E}_{x^c, y^c \sim D^c} \Big[ \ell( \theta; x^c, y^c ) \Big]
+      f^c(\theta) = \mathbb{E}_{x^c, y^c \sim \mathcal{D}^c} \Big[ \ell( \theta; x^c, y^c ) \Big]
     \end{align*}
     
     \vspace{-1em}
@@ -959,7 +975,7 @@ ARGO Seminar}
   \end{frame}
 
 
-  \begin{frame}{\Large For Quadratics ($f^c(\theta) = (1/2)\theta^\top A^c \theta + b \theta$)}
+  \begin{frame}{\Large For Quadratics ($f^c(\theta) = (1/2)\theta^\top \bar{A}^c \theta + \bar{b}^c \theta$)}
     The bias is the same as FedLSA
     \begin{align*}
       \theta_\infty^{\text{bias}}
@@ -967,9 +983,9 @@ ARGO Seminar}
         \frac{1}{N}
         \sum_{c=1}^N
         (\text{Id} - \bar{\Gamma}_{t,1:H})^{-1} 
-        (\text{Id} - (\text{Id}- \eta A^c)^H)\{ \theta_\star^c - \theta_\star \}
+        (\text{Id} - (\text{Id}- \eta \bar{A}^c)^H)\{ \theta_\star^c - \theta_\star \}
     \end{align*}
-    where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id}- \eta A^c)^H$
+    where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id}- \eta \bar{A}^c)^H$
 
     \pause
     
@@ -989,7 +1005,7 @@ ARGO Seminar}
   \begin{frame}{In the General Case\\[-0.5em]
       \small (Strongly convex and smooth functions $f^c$)}
 
-    Bias is in two parts!
+    Bias is in \emph{two} parts!
     \begin{align*}
       \theta_\infty^{\text{bias}}
       & =
@@ -999,8 +1015,8 @@ ARGO Seminar}
         (\nabla^2 f^c(\theta_\star) -  \nabla^2 f^c(\theta_\star)) \nabla f^c(\theta_\star)
       \\
       & \quad
-        + \frac{\eta}{2 N} \nabla f^c(\theta_\star)^{-1} \nabla^3 f(\theta_\star) \textbf{A} \mathcal{C}(\theta_\star)
-        + O(\eta^{3/2} + \eta^2 H^2)
+        + \frac{\eta}{2 N} \nabla^2 f^c(\theta_\star)^{-1} \nabla^3 f(\theta_\star) \textbf{A} \mathcal{C}(\theta_\star)
+        + O(\eta^{3/2} H + \eta^2 H^2)
     \end{align*}
     \small 
     where:
@@ -1029,7 +1045,7 @@ ARGO Seminar}
 
     \vspace{-1.5em}
 
-    $\rightarrow$ it seems Scaffold cannot correct bias due to stochasticity!!
+    $\rightarrow$ it seems Scaffold cannot correct bias due to stochasticity!
 
   \end{frame}
   
@@ -1059,6 +1075,7 @@ ARGO Seminar}
     \item Direct analysis of SCAFFLSA ``à la FedLSA''?
     \item Methods that correct all bias in non-linear regimes?
     \item Removing hyperparameters?
+    \item Asynchronous federated learning?
     \end{itemize}
   \end{frame}
 
@@ -1071,11 +1088,12 @@ ARGO Seminar}
     
 
     \small
-    See the paper(s):
+    See the papers:
 
-    \fullcite{mangold2024scafflsa}
+    \AtNextCite{\defcounter{maxnames}{99}}
+    \fullcite{mangold2024scafflsa_nofirstname}
 
-    On FedAvg and Richardson-Romberg: soon on arXiv!
+    On FedAvg and Richardson-Romberg (with \textcolor{beamer@blendedblue}{E. Moulines, A. Durmus, A. Dieuleveut and S. Samsonov}): soon on arXiv!
   \end{frame}
 
 
