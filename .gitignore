@@ -13,3 +13,6 @@
 *.toc
 main.pdf
 slides.pdf
+*.el
+*slides*
+*checkpoint*

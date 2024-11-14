@@ -109,8 +109,8 @@ Col4/.style= {Col1, fill=yellow!20},
 \titlegraphic{
 }
 \institute{}
-\date{November 4, 2024 \\
-ARGO Seminar}
+\date{November 14, 2024 \\
+PreMeDICaL Seminar}
 
 %%%%% DOCUMENT
 
@@ -141,9 +141,9 @@ ARGO Seminar}
       \includegraphics[width=0.4\linewidth]{images/central.pdf}
     \end{center}
     
-  \end{minipage}\pause vs.\hspace{1.5em}%
+  \end{minipage}vs.\hspace{1.5em}%
   \begin{minipage}{0.5\linewidth}
-    \pause
+
     \begin{center}
       Data collection \emph{by users} \\[0.5em]
       
@@ -152,8 +152,6 @@ ARGO Seminar}
   \end{minipage}
 
   \vspace{1em}
-
-  \pause
   
   \begin{center}
     \textbf{
@@ -177,7 +175,7 @@ ARGO Seminar}
   \item \emph{Volume of data}:
 
     {\small
-      $\rightarrow$ data may be large (e.g. cameras of self-driving car)
+      $\rightarrow$ data may be large (e.g. high-resolution images, video)
     }
     \\
     ~
@@ -272,7 +270,7 @@ ARGO Seminar}
       \min_{\theta \in \mathbb{R}^d}
       \mathbb{E}_{x^1, y^1 \sim \mathcal{D}^1} \Big[ \ell( \theta; x^1, y^1 ) \Big]
       \rightarrow
-      \theta_\star^1
+      \hat\theta_\star^1
     \end{align*}
 
     \vspace{-2em}
@@ -281,7 +279,7 @@ ARGO Seminar}
       \min_{\theta \in \mathbb{R}^d}
       \mathbb{E}_{x^2, y^2 \sim \mathcal{D}^2} \Big[ \ell( \theta; x^2, y^2 ) \Big]
       \rightarrow
-      \theta_\star^2
+      \hat\theta_\star^2
     \end{align*}
 
     \vspace{-2em}
@@ -296,7 +294,7 @@ ARGO Seminar}
       \min_{\theta \in \mathbb{R}^d} 
       \mathbb{E}_{x^N, y^N \sim \mathcal{D}^N} \Big[ \ell( \theta; x^N, y^N ) \Big]
       \rightarrow
-      \theta_\star^N
+      \hat\theta_\star^N
     \end{align*}
   \end{minipage}~~~~%
   \begin{minipage}[t]{0.45\linewidth}
@@ -304,8 +302,8 @@ ARGO Seminar}
     
     Estimate global solution
     \begin{align*}
-      \theta_\star
-      = \frac{1}{N} \sum_{c=1}^N \theta_\star^c
+      \hat\theta_\star
+      = \frac{1}{N} \sum_{c=1}^N \hat\theta_\star^c
     \end{align*}
 
     OK if $\mathcal{D}_1 = \mathcal{D}_2 = \dots = \mathcal{D}_N$ 
@@ -414,19 +412,22 @@ ARGO Seminar}
 
   In Federated TD learning, $N$ agent use a shared policy $\pi$ in $N$ different environments:
   \begin{align*}
-    S_0^c= s, 
-    A_k^c \sim \pi(\cdot | S_k^c), 
-    \text{ and }
-    S_{k+1}^c \sim P^c_{\text{MDP}}(\cdot| S_k^c,A_k^c)
+    & \text{1. Start from state } S_0^c= s,
+      \text{ take action } A_k^c \sim \pi(\cdot | S_k^c)
+    \\
+    & \text{2. Reach new state } S_{k+1}^c% \sim P^c_{\text{MDP}}(\cdot| S_k^c,A_k^c)
+      \text{, and receive reward } r_k^{c}
+    \\
   \end{align*}
 
   \pause
+  \vspace{-1em}
   
-  Goal: estimate its value in each environment, for $s \in \mathcal{S}$,
+  Goal: estimate the value of $\pi$ for each agent, for $s \in \mathcal{S}$,
   \begin{align*}
-    V^{c,\pi}(s) = \textstyle{\mathbb{E}\left[\sum_{k=0}^{\infty}\gamma^{k} r^{c}(S_k^c,A_k^c)\right]}
+    V^{c}_{\pi}(s) = \textstyle{\mathbb{E}\left[\sum_{k=0}^{\infty}\gamma^{k} r_k^{c} \right]}
   \end{align*}
-  where $r^c$ is a reward obtained by agent $c$
+  where $0 < \gamma < 1$ determines importance of future rewards
 \end{frame}
 
 \begin{frame}{Some problems do not fit this framework...\\[-0.5em]
@@ -434,7 +435,7 @@ ARGO Seminar}
 
   Idea: build a \emph{shared estimate} of all values
   \begin{align*}
-    V^{c,\pi}(s) \approx \theta^\top \varphi(s)
+    V^{c}_{\pi}(s) \approx \theta^\top \varphi(s)
   \end{align*}
   using $\theta \in \mathbb{R}^d$ and embedding $\varphi: \mathcal{S} \rightarrow \mathbb{R}^d$
 
@@ -451,19 +452,24 @@ ARGO Seminar}
 
 
 \begin{frame}{Linear Stochastic Approximation\\[-0.5em]
-  \normalsize Special case: only one agent}
-  TD (with linear approx.) can be seen as solving a linear system 
+    \normalsize Special case: only one agent}
+  TD (with linear approx.) can be seen as solving a linear system
+  
   \begin{equation*}
     \bar{A} \theta_\star
     = 
     \bar{b}
   \end{equation*}
-  where $\bar{A}$ and $\bar{b}$ are known through stochastic estimates $A(Z)$, $b(Z)$
-  for a sequence of random variables $Z$
 
+  \pause
+  
+  where $\bar{A}$ and $\bar{b}$ are known through stochastic estimates $A(Z_t)$, $b(Z_t)$
+  for a sequence of random variables $Z_t$
+
+  \pause
   \vspace{-0.5em}
 
-  ... variance of $A(Z)$ and $b(Z)$ are typically very large
+  ... variance of $A(Z_t)$ and $b(Z_t)$ are typically very large
 
   \vspace{-0.5em}
   
@@ -471,20 +477,20 @@ ARGO Seminar}
   
   \vspace{0.5em}
 
-  \pause
+  %\pause
 
-  \small 
-  Note: It is inefficient to cast it as a minimization problem with loss $\| \bar{A} \theta_\star - \bar{b} \|^2$ \\
-  $\rightarrow$ This requires a different method, with a different analysis
+  %\small 
+  %Note: It is inefficient to cast it as a minimization problem with loss $\| \bar{A} \theta_\star - \bar{b} \|^2$ \\
+  %$\rightarrow$ This requires a different method, with a different analysis
 \end{frame}
 
 \begin{frame}{Algorithm for LSA}
   \begin{algorithmic}
     \State Initialize $\theta_0 \in \mathbb{R}^d$
     \For{$t=0$ to $T-1$}
-    \State Observe $Z_{t}$ and update:
+    \State Observe $Z_{t+1}$ and update:
     \begin{center}
-      ~~~~~~~~~~$\theta_{t} = \theta_{t-1} - \eta( A(Z_{t}) \theta_{t-1} - b(Z_{t}))$
+      ~~~~~~~~~~$\theta_{t+1} = \theta_{t} - \eta( A(Z_{t+1}) \theta_{t} - b(Z_{t+1}))$
     \end{center}
     \EndFor
   \end{algorithmic}  
@@ -497,7 +503,7 @@ ARGO Seminar}
     \begin{algorithmic}
       \State Initialize $\theta_0 \in \mathbb{R}^d$
       \For{$t=0$ to $T-1$}
-      \State Observe $Z^c_{t,h}$ and update: $\theta_{t} = \theta_{t-1} - \eta( A(Z_{t}) \theta_{t-1} - b(Z_{t}))$
+      \State Observe $Z^c_{t+1}$ and update: $\theta_{t+1} = \theta_{t} - \eta( A(Z_{t+1}) \theta_{t} - b(Z_{t+1}))$
       \EndFor
     \end{algorithmic}
   }
@@ -509,7 +515,7 @@ ARGO Seminar}
 
   \vspace{-0.5em}
 
-  We may write: $\theta_{t} - \theta_\star = (\text{Id} - \eta A(Z_t))(\theta_{t-1} - \theta_\star) - \eta \varepsilon(Z_t)$  
+  We may write: $\theta_{t+1} - \theta_\star = (\text{Id} - \eta A(Z_{t+1}))(\theta_{t} - \theta_\star) - \eta \varepsilon(Z_{t+1})$  
 
   \pause
   
@@ -522,8 +528,12 @@ ARGO Seminar}
   \item Oracle: i.i.d sequence $Z_{t}$'s such that
     $\mathbb{E} [A(Z_{t})] = \bar{A}$, and
     $\mathbb{E} [b(Z_{t})] = \bar{b}$
+
+    \vspace{0.2em}
     
-  \item Exponential stability: $\mathbb{E}[ \| \prod_{t=\ell}^k (\text{Id} - \eta A(Z_t)) \|^2 ] \le (1 - \eta a)^{k-\ell}$ for some $a > 0$
+  \item Exponential stability: \textcolor{purple}{for some $a > 0$}, $\mathbb{E}[ \| \text{Id} - \eta A(Z_t) \|^2 ] \le (1 - \eta a)$ 
+
+    \vspace{0.2em}
 
   \item Noise $\varepsilon(Z) = (A(Z) - \bar{A}) \theta_\star + (b(Z) - \bar{b})$ has finite variance $\sigma_\star^2$
   \end{itemize}
@@ -569,13 +579,22 @@ ARGO Seminar}
   Using $\mathbb{E}[ \| \Gamma_{t:t'} u  \|^2 ] \le (1 - \eta a)^{t' - t + 1} \| u \|^2$ to bound each term:
   \begin{align*}
     \mathbb{E} [ \| \theta_T - \theta_\star \|^2 ]
-    & \le
+    & \lesssim{}
       (1 - \eta a)^T \| \theta_0 - \theta_\star \|^2
       + \frac{\eta \sigma_\star^2}{a}
   \end{align*}
 
   \vspace{0.5em}
   
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \textcolor{beamer@blendedblue}{
+      \huge Federated Linear Stochastic Approximation
+    }
+  \end{center}
+
 \end{frame}
 
 
@@ -595,6 +614,8 @@ ARGO Seminar}
   \vspace{-1em}
 
   \pause
+
+  \vspace{-1em}
   
   \textbf{Assumptions}
 
@@ -604,11 +625,17 @@ ARGO Seminar}
     \small
   \item $\theta_\star$ and $\theta_\star^c$ are unique, and $\bar{A}^c$ and $\bar{b}^c$ are split among $N$ agents
     
-  \item Oracle: i.i.d sequence $Z_{t}^c$'s such that
-    $\mathbb{E} [A(Z_{t}^c)] = \bar{A}^c$, and
-    $\mathbb{E} [b(Z_{t}^c)] = \bar{b}^c$
+    \vspace{0.2em}
+
+  \item Oracle: i.i.d sequence $Z_{t,h}^c$'s such that
+    $\mathbb{E} [A(Z_{t,h}^c)] = \bar{A}^c$, and
+    $\mathbb{E} [b(Z_{t,h}^c)] = \bar{b}^c$
     
-  \item Exponential stability: $\mathbb{E}[ \| \prod_{t=\ell}^k (\text{Id} - \eta A^c(Z_t^c)) \|^2 ] \le (1 - \eta a)^{k-\ell}$ for $a > 0$
+      \vspace{0.2em}
+
+    \item Exponential stability: \textcolor{purple}{for some $a > 0$}, $\mathbb{E}[ \| \text{Id} - \eta A^c(Z_{t,h}^c) \|^2 ] \le (1 - \eta a)$ 
+
+    \vspace{0.2em}
 
   \item Noise $\varepsilon^c(Z) = (A^c(Z) - \bar{A}^c) \theta_\star^c + (b^c(Z) - \bar{b}^c)$ has variance bounded by $\sigma_\star^2$
   \end{itemize}
@@ -639,10 +666,10 @@ ARGO Seminar}
     \For{$t=0$ to $T-1$}
     \State Initialize $\theta_{t,0} = \theta_t$
     \For{each agent $c = 1 .. N$}
-    \For{$h = 1$ to $H$}
-    \State Observe $Z^c_{t,h}$ and perform local update:
+    \For{$h = 0$ to $H-1$}
+    \State Observe $Z^c_{t,h+1}$ and perform local update:
     \begin{center}
-      ~~~~~~~~~~$\theta_{t,h} = \theta_{t,h-1}^c - \eta( A^c(Z^c_{t,h}) \theta_{t,h-1}^c - b^c(Z^c_{t,h}))$
+      ~~~~~~~~~~$\theta_{t,h+1} = \theta_{t,h}^c - \eta( A^c(Z^c_{t,h+1}) \theta_{t,h}^c - b^c(Z^c_{t,h+1}))$
     \end{center}
     \EndFor
     \EndFor
@@ -655,9 +682,9 @@ ARGO Seminar}
 \begin{frame}{Analysis of FedLSA}
   \textbf{Stochastic Expansion (over one communication round)}
   \begin{align*}
-    \theta_{t} - \theta_\star
+    \theta_{t+1} - \theta_\star
     & =
-    \frac{1}{N} \sum_{c=1}^N \Gamma_{t,1:H}^c (\theta_{t-1} - \theta_\star)
+    \frac{1}{N} \sum_{c=1}^N \Gamma_{t,1:H}^c (\theta_{t} - \theta_\star)
     + \frac{1}{N} \sum_{c=1}^N (\text{Id} - \Gamma_{t,1:H}^c) (\theta_\star^c - \theta_\star)
     \\
     & \qquad + \frac{\eta}{N} \sum_{c=1}^N \sum_{h=1}^H \Gamma_{t,h+1:H}^c \varepsilon^c(Z_t^c)
@@ -677,10 +704,10 @@ ARGO Seminar}
     & =
       \frac{1}{N}
       \sum_{c=1}^N
-      (\text{Id} - \bar{\Gamma}_{t,1:H})^{-1} 
-      (\text{Id} - (\text{Id}- \eta \bar{A}^c)^H)\{ \theta_\star^c - \theta_\star \}
+      (\text{Id} - \bar{\Gamma})^{-1} 
+      (\text{Id} - \bar{\Gamma}^c)\{ \theta_\star^c - \theta_\star \}
   \end{align*}
-  where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id} - \eta \bar{A}^c)^H$
+  where $\bar{\Gamma}^c = (\text{Id} - \eta \bar{A}^c)^H$ and $\bar{\Gamma} = \tfrac{1}{N} \sum_{c=1}^N \bar{\Gamma}^c$
 
   \pause
 
@@ -688,12 +715,10 @@ ARGO Seminar}
   
   And give a convergence rate
   \begin{align*}
-    \mathbb{E} \Big[ \| {\theta_t - \theta^{bias}_{\infty} - \theta_\star} \|^2 \Big]
-    =
-    O\left(
-    (1 - \eta a)^{H t} \| \theta_0 - \theta_\star \|^2
+    \mathbb{E} \Big[ \| {\theta_T - \theta^{bias}_{\infty} - \theta_\star} \|^2 \Big]
+    \lesssim{}
+    (1 - \eta a)^{H T} \| \theta_0 - \theta_\star \|^2
     + \frac{\eta \sigma_\star^2}{N a}
-    \right)
   \end{align*}
 \end{frame}
 
@@ -726,11 +751,11 @@ ARGO Seminar}
   To achieve $\mathbb{E} \Big[ \| {\theta_T - \theta_\star} \|^2 \Big] \le \epsilon^2$, we need
   \begin{itemize}
   \item $\frac{\eta \sigma_\star^2}{N a} \le \epsilon^2$ ~~~~~~\,~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $\eta = \frac{N a \epsilon^2}{\sigma_\star^2}$
-  \item $\| \theta_T^{\text{bias}} \|^2 \le \epsilon^2$ ~~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{\sigma_\star^2 }{N \epsilon \Delta_{\text{het}}}$
-  \item $(1 - \eta a)^{H T} \| \theta_0 - \theta_\star \|^2 \le \epsilon^2$ ~~~\,$\rightarrow$ $T = \frac{\Delta_{\text{het}}}{a^2 \epsilon} \log \tfrac{\| \theta_0 - \theta_\star \|}{ \epsilon }$
+  \item $\| \theta_{\infty}^{\text{bias}} \|^2 \le \epsilon^2$ ~~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{\sigma_\star^2 }{\textcolor{red}{N \epsilon} \textcolor{purple}{\Delta_{\text{het}}}}$
+  \item $(1 - \eta a)^{H T} \| \theta_0 - \theta_\star \|^2 \le \epsilon^2$ ~~~\,$\rightarrow$ $T = \frac{\textcolor{purple}{\Delta_{\text{het}}}}{a^2 \textcolor{red}{\epsilon}} \log \tfrac{\| \theta_0 - \theta_\star \|}{ \epsilon }$
   \end{itemize}
 
-  where $\Delta_{\text{het}} = \frac{1}{N} \sum_{c=1}^N \| \theta_\star - \theta_\star^c \| $
+  where $\textcolor{purple}{\Delta_{\text{het}}} = \frac{1}{N} \sum_{c=1}^N \| \theta_\star - \theta_\star^c \| $
 \end{frame}
 
 
@@ -745,9 +770,9 @@ ARGO Seminar}
     \State Initialize $\theta_{t,0} = \theta_t$
     \For{each agent $c = 1 .. N$}
     \For{$h=1$ to $H$}
-    \State Observe $Z^c_{t,h}$ and perform local update:
+    \State Observe $Z^c_{t,h+1}$ and perform local update:
     \begin{center}
-      ~~~~~~~~~~$\theta_{t,h} = \theta_{t,h-1}^c - \eta( A^c(Z^c_{t,h}) \theta_{t,h-1}^c - b^c(Z^c_{t,h}) - \xi_t)$
+      ~~~~~~~~~~$\theta_{t,h+1} = \theta_{t,h}^c - \eta( A^c(Z^c_{t,h+1}) \theta_{t,h}^c - b^c(Z^c_{t,h+1}) - \xi_t)$
     \end{center}
   \vspace{-0.2em}
     \EndFor
@@ -814,11 +839,11 @@ ARGO Seminar}
   To achieve $\mathbb{E} \Big[ \| {\theta_T - \theta_\star} \|^2 \Big] \le \epsilon^2$, we need
   \begin{itemize}
   \item $\frac{\eta \sigma_\star^2}{N a} \le \epsilon^2$ ~~~~~~\,~~~~~~~~~~~~~~~~~~~ $\rightarrow$ $\eta = \frac{N a \epsilon^2}{\sigma_\star^2}$
-  \item $H \le \frac{a}{\eta \max_c \| \bar{A}^c \|^2}$ ~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{ \sigma_\star^2 }{N \epsilon^2 \max_c \| \bar{A}^c \|^2}$
+  \item $H \le \frac{a}{\eta \max_c \| \bar{A}^c \|^2}$ ~~~~~~~~~~~~~~~~~ $\rightarrow$ $H = \frac{ \sigma_\star^2 }{\textcolor{purple}{N \epsilon^2} \max_c \| \bar{A}^c \|^2}$
   \item $(1 - \frac{\eta a H}{2})^{T} \psi_0 \le \epsilon^2$ ~~~~~~~~~~~\,~~$\rightarrow$ $T = \frac{2 \max_c \| \bar{A}^c \|^2}{a^2} \log \tfrac{\psi_0}{ \epsilon }$
   \end{itemize}
 
-  $\rightarrow$ $H \propto 1/N\epsilon^2$ rather than $1/N\epsilon$, and $T$ independent on $\epsilon$
+  $\rightarrow$ $H \propto 1/\textcolor{purple}{N\epsilon^2}$ rather than $1/\textcolor{purple}{N\epsilon}$, \textcolor{purple}{$T$ depends logarithmically on $\epsilon$}
 
 
 \end{frame}
@@ -982,10 +1007,10 @@ ARGO Seminar}
       & =
         \frac{1}{N}
         \sum_{c=1}^N
-        (\text{Id} - \bar{\Gamma}_{t,1:H})^{-1} 
-        (\text{Id} - (\text{Id}- \eta \bar{A}^c)^H)\{ \theta_\star^c - \theta_\star \}
+        (\text{Id} - \bar{\Gamma})^{-1} 
+        (\text{Id} - \bar{\Gamma}^c)\{ \theta_\star^c - \theta_\star \}
     \end{align*}
-    where $\bar{\Gamma}_{t,1:H} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id}- \eta \bar{A}^c)^H$
+    where $\bar{\Gamma}^c =(\text{Id}- \eta \bar{A}^c)^H$ and $\bar{\Gamma} = \tfrac{1}{N} \sum_{c=1}^N (\text{Id}- \eta \bar{A}^c)^H$
 
     \pause
     
@@ -1005,49 +1030,87 @@ ARGO Seminar}
   \begin{frame}{In the General Case\\[-0.5em]
       \small (Strongly convex and smooth functions $f^c$)}
 
+    \pause
+
+    \vspace{-0.5em}
+    
     Bias is in \emph{two} parts!
+
+    \vspace{-2.5em}
+
     \begin{align*}
       \theta_\infty^{\text{bias}}
       & =
+        \underbrace{
         \frac{\eta(H -1)}{2 N}
         \sum_{c=1}^N 
         \nabla^2 f^c(\theta_\star)^{-1} 
         (\nabla^2 f^c(\theta_\star) -  \nabla^2 f^c(\theta_\star)) \nabla f^c(\theta_\star)
-      \\
+        }_{\text{\textcolor{purple}{heterogeneity bias}}}
+      \\[-0.2em]
       & \quad
-        + \frac{\eta}{2 N} \nabla^2 f^c(\theta_\star)^{-1} \nabla^3 f(\theta_\star) \textbf{A} \mathcal{C}(\theta_\star)
+        + \underbrace{
+        \frac{\eta}{2 N} \nabla^2 f^c(\theta_\star)^{-1} \nabla^3 f(\theta_\star) \textbf{A} \mathcal{C}(\theta_\star)
+        }_{\text{\textcolor{purple}{stochasticity bias}}}
         + O(\eta^{3/2} H + \eta^2 H^2)
     \end{align*}
-    \small 
-    where:
 
-    \vspace{-1em}
-    
-    \begin{itemize}
-    \item $\textbf{A} = (\text{Id} \otimes \nabla^2 f(\theta_\star) + \nabla^2 f(\theta_\star) \otimes \text{Id})^{-1}$
-    \item  $\mathcal{C}(\theta_\star)$ is the gradient's covariance at $\theta_\star$
-    \end{itemize}
-    
+    \vspace{-0.5em}
+
+    where $\textbf{A} = (\text{Id} \otimes \nabla^2 f(\theta_\star) + \nabla^2 f(\theta_\star) \otimes \text{Id})^{-1}$\\
+    and $\mathcal{C}(\theta_\star)$ is the gradient's covariance at $\theta_\star$
     
   \end{frame}
 
-  \begin{frame}{A new Federated Method?\\[-0.5em]
-    \small (A bit of teasing on Richardson-Romberg)}
+  \begin{frame}[t]{Numerical Illustration}
     \vspace{-1em}
     
-    Running FedAvg with step sizes $\eta$ and $2 \eta$, we can correct the bias:
+    Logistic regression, L2 regularization, very noisy gradients
 
+    \only<1>{\vspace{-0.5em}}
     \vspace{-1em}
     
     \begin{center}
-      \includegraphics[width=0.5\linewidth]{images/heterogeneous_mixed_100.pdf}
+      \only<1>{\includegraphics[width=0.8\linewidth]{images/heterogeneous_iterates_100_fedavg.pdf}}%
+      \only<2>{\includegraphics[width=0.8\linewidth]{images/heterogeneous_iterates_100_fedavg_scaffold.pdf}}
     \end{center}
 
     \vspace{-1.5em}
-
+    
+    \only<2>{
     $\rightarrow$ it seems Scaffold cannot correct bias due to stochasticity!
+  }%
+  \end{frame}
+
+  \begin{frame}{A new Federated Method\\[-0.5em]
+    \small (A bit of teasing on Richardson-Romberg)}
+    
+    Running FedAvg with step sizes $\eta$ and $2 \eta$, we obtain two estimates
+    \begin{align*}
+      \mathbb{E}[ \theta^{(\eta)} ] & = \theta_\star + \textcolor{purple}{\eta \Delta} + O(\eta^{3/2} H + \eta^2 H^2) \\
+      \mathbb{E}[ \theta^{(2\eta)} ] & = \theta_\star + \textcolor{purple}{2\eta \Delta} + O(\eta^{3/2} H + \eta^2 H^2)
+    \end{align*}
+    where $\Delta$ is the first-order bias
+
+    \pause
+
+    Richardson-Romberg estimate: $2 \theta^{(\eta)} - \theta^{(2\eta)}$
+    \begin{align*}
+      \mathbb{E}[ 2 \theta^{(\eta)} - \theta^{(2\eta)} ] & = \theta_\star + O(\eta^{3/2} H + \eta^2 H^2)
+    \end{align*}
+    
+  \end{frame}
+  
+  \begin{frame}{A new Federated Method\\[-0.5em]
+    \small (A bit of teasing on Richardson-Romberg)}
+    \vspace{-1em}
+    
+    \begin{center}
+      \includegraphics[width=0.8\linewidth]{images/heterogeneous_iterates_100_all_methods.pdf}
+    \end{center}
 
   \end{frame}
+  
   
   \begin{frame}{Conclusion and Perspectives}
 
@@ -1065,6 +1128,8 @@ ARGO Seminar}
     \item We proved first-order expansion of FedAvg's bias
     \end{itemize}
 
+    \pause
+
     Perspectives:
 
     \vspace{-0.5em}
@@ -1072,9 +1137,9 @@ ARGO Seminar}
     \begin{itemize}
     \small
     \item SCAFFLSA's analysis is good for small step-size: what about larger steps?
-    \item Direct analysis of SCAFFLSA ``à la FedLSA''?
     \item Removing hyperparameters?
     \item Asynchronous federated learning?
+    \item Non-convex functions? Large models?
     \end{itemize}
   \end{frame}
 
