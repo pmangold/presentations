@@ -1,0 +1,77 @@
+\usetikzlibrary{fadings}
+
+
+\mode<presentation>
+
+% frame without head and foot line, and without numbering
+\makeatletter
+\newenvironment{notitle}{
+  \setbeamertemplate{footline}{}
+  \setbeamertemplate{headline}{}
+}{}
+\makeatother
+
+
+
+\setbeamertemplate{headline}{
+  \vskip2em
+  \tikz[remember picture,overlay]{
+    \node(a)[anchor=west]{\hskip1em\usebeamerfont{frametitle}\insertsectionhead
+    };
+    \draw[line width=0.1em, headerline!40](a.south west)--+(\textwidth,0);
+  }
+  % if subsection is not empty
+  \ifx\insertsubsection\empty\else
+  \vskip2.2em
+  \tikz[remember picture,overlay]{
+    \fill[headerline!40,path fading=east] (0,-1em) rectangle (\linewidth,1em);
+    \node(a)[anchor=west]{\hskip1em\usebeamerfont{framesubtitle}\insertsubsectionhead
+    };
+  }
+  \fi
+  \vskip1em
+}
+
+\makeatletter
+\setbeamertemplate{navigation symbols}{}
+
+\makeatother
+\setbeamertemplate{footline}
+{
+  \textcolor{headerline!40}{\rule{\paperwidth}{0.05em}}
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.7\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{numbering in head/foot}%
+    \usebeamerfont{numbering in head/foot} \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}%
+  }
+  \vskip0pt%
+}
+
+
+
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center, rounded=true]{part title}
+    \usebeamercolor[fg]{sectionpagetitle}\usebeamerfont{sectionpagetitle}\insertsection\par
+  \end{beamercolorbox}
+}
+
+\AtBeginSection{
+%  \begingroup
+%  \setbeamertemplate{headline}{}
+    \begin{frame}[plain]
+      \sectionpage
+    \end{frame}
+  \addtocounter{framenumber}{-1}
+%  \endgroup
+}
+
+
+\mode<all>

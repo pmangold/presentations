@@ -1,0 +1,74 @@
+\usepackage{changepage}
+\usepackage{everypage}
+
+\AddEverypageHook{
+  \setcounter{footnote}{0}
+}
+
+\usetheme{Warsaw}
+
+
+\usecolortheme[RGB={230, 141, 231}]{structure}
+
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\setbeamertemplate{title page}[default][colsep=-4bp,rounded=true]
+\setbeamertemplate{section page}[default][colsep=-4bp,rounded=true]
+
+
+\setbeamertemplate{headline}{
+  \hbox{%
+  \begin{beamercolorbox}[ht=7ex,dp=1.125ex]{title}%
+    \hspace{1em}\usebeamerfont{title}\insertsectionhead
+  \end{beamercolorbox}
+  }
+  \hbox{%
+  \begin{beamercolorbox}[ht=4ex,dp=1.125ex]{subtitle}%
+    \hspace{1em}\usebeamerfont{subtitle}\insertsubsectionhead
+  \end{beamercolorbox}
+  }
+}
+
+\makeatother
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.7\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{numbering in head/foot}%
+    \usebeamerfont{numbering in head/foot} \insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+  \end{beamercolorbox}%
+  }
+  \vskip0pt%
+}
+\makeatletter
+\setbeamertemplate{navigation symbols}{}
+
+\makeatletter
+\newenvironment{notitle}{
+  \setbeamertemplate{footline}{}
+  \setbeamertemplate{headline}{}
+}{}
+\makeatother
+
+
+\setbeamertemplate{section page}{
+  \centering
+  \begin{beamercolorbox}[sep=12pt,center, rounded=true]{part title}
+    \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+}
+\AtBeginSection{
+  \begin{notitle}
+    \begin{frame}
+      \sectionpage
+    \end{frame}
+  \end{notitle}
+  \addtocounter{framenumber}{-1}
+}

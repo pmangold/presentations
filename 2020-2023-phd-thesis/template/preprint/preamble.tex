@@ -1,0 +1,54 @@
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}         % Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage{doi}
+
+
+\usepackage{authblk}
+
+\usepackage{subcaption}
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+\usepackage[noend]{algpseudocode}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{cleveref}       % smart cross-referencing
+
+\usepackage{enumitem}
+
+
+\usepackage{xcolor}
+
+\definecolor{linkcolor}{RGB}{83,83,182}
+
+\hypersetup{
+    colorlinks=true,
+    citecolor=linkcolor,
+    linkcolor=linkcolor,
+    urlcolor=linkcolor
+}
+
+\usepackage[backend=biber,natbib=true,style=authoryear,doi=false,isbn=false,url=false,eprint=false,giveninits=true,maxbibnames=200,maxcitenames=2,mincitenames=1,uniquename=false,uniquelist=false,dashed=false]{biblatex}
+
+\newcommand{\noopsort}[1]{#1}
+
+
+\addbibresource{references.bib}% Syntax for version >= 1.2
+
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{
+      \step[fieldsource=url, match=\regexp{http://(dx.doi.org/|dl.acm.org/)}, final]
+      \step[fieldset=url, null]
+      \step[fieldset=urldate, null]
+    }
+  }
+}
+\setlength\bibitemsep{1.5\itemsep}
