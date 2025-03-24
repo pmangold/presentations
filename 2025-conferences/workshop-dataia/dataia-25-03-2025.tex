@@ -25,14 +25,14 @@
 
 
 \tikzset{
-    blueblock/.style = {draw=amethyst,fill=amethyst!15,rounded corners=0pt,inner sep=7pt}
+    blueblock/.style = {draw=amethyst,thick,fill=amethyst!15,rounded corners=0pt,inner sep=7pt}
 }
 \tikzset{
-    pinkblock/.style = {draw=amaranth,fill=amaranth!15,rounded corners=0pt,inner sep=7pt}
+    pinkblock/.style = {draw=amaranth,thick,fill=amaranth!15,rounded corners=0pt,inner sep=7pt}
 }
 
 \tikzset{
-    widepinkblock/.style = {draw=amaranth,fill=amaranth!15,rounded corners=0pt,inner sep=20pt}
+    widepinkblock/.style = {draw=amaranth,thick,fill=amaranth!15,rounded corners=0pt,inner sep=20pt}
 }
 
 \usepackage{multirow}
@@ -196,7 +196,7 @@ Col4/.style= {Col1, fill=yellow!20},
 \end{frame}
 \addtocounter{framenumber}{-1}
 
-\begin{frame}[t]{Optimisation fédérée}
+\begin{frame}[t]{Federated Learning}
 % \footfullcite{mangold2020decentralized}$^{,}$\footfullcite{ogier2022flamby}$^{,}$\footfullcite{mangold2024scafflsa}$^{,}$\footfullcite{mangold2025refined}$^{,}$\footfullcite{mangold2025scaffold}}
 \vspace{0.5em}
   \begin{minipage}{0.35\linewidth}
@@ -210,7 +210,7 @@ Col4/.style= {Col1, fill=yellow!20},
 
 \only<3,4>{
     \begin{center}
-      Optimisation collaborative
+      Collaborative optimization problem
       \begin{align*}
         \min_{x \in \mathbb{R}^d} 
         \frac{1}{N} \sum_{c=1}^N f_c(x)
@@ -225,48 +225,58 @@ Col4/.style= {Col1, fill=yellow!20},
       
   \end{minipage}
 
-\vspace{0.5em}
+% \vspace{0.5em}
 
-\only<4>{
-  \begin{center}
-      \textbf{\textcolor{purple}{Difficultés centrales}} : hétérogénéité des données et des moyens de calcul 
+% \only<4>{
+%   \begin{center}
+%       \textbf{\textcolor{purple}{Difficultés centrales}} : hétérogénéité des données et des moyens de calcul 
 
-      \vspace{-0.5em}
+%       \vspace{-0.5em}
       
-      + communication lente et difficile à établir
+%       + communication lente et difficile à établir
+%   \end{center}
+% }
+  \pause
+  \pause
+  \pause
+  \begin{center}
+    \textcolor{purple}{\bfseries Problem: data is heterogeneous, communication is expensive}
   \end{center}
-}
-
+  
 \end{frame}
 
 
 
+\begin{frame}
+  \begin{center}
+    \huge \textcolor{purple}{
+      I. Federated Averaging
+      }
+  \end{center}
+\end{frame}
 
-\begin{frame}[t]{Optimisation fédérée ~~~ \raisebox{0.2em}{\textcolor{black}{\normalsize $x^\star \in \arg\min_{x \in \mathbb{R}^d} 
+
+\begin{frame}[t]{Federated Averaging\footfullcite{mcmahan2017communicationoral} ~~~ \raisebox{0.2em}{\textcolor{black}{\normalsize $x^\star \in \arg\min_{x \in \mathbb{R}^d} 
     \frac{1}{N} \sum_{c=1}^N \mathbb{E}_Z[ F_c(x; Z) ]$}} ~~}  
     
-    \vspace{-1em}
+    \vspace{1em}
 
   \begin{minipage}{0.5\linewidth}
-  Federated Averaging\footfullcite{mcmahan2017communicationoral} (FedAvg)
-
-\vspace{0.5em}
-    
 
   \footnotesize
-  À chaque itération globale :
+  At each global iteration
 
     \begin{itemize}[leftmargin=*,itemsep=0em]
   \footnotesize
-    \item Pour $c=1$ à $N$ en parallèle
+    \item For $c=1$ à $N$ in parallel
 
 \vspace{-0.2em}
     
     
 \begin{itemize}[leftmargin=*,itemsep=0em]
-\item Recevoir $x^{(t)}$, initialiser $x^{(t,0)}_c = x^{(t)}$
+\item Receive $x^{(t)}$, set $x^{(t,0)}_c = x^{(t)}$
     
-        \item Pour $h=0$ à $H-1$
+        \item For $h=0$ to $H-1$
     \end{itemize}
 
 \vspace{-0.6em}
@@ -274,7 +284,7 @@ Col4/.style= {Col1, fill=yellow!20},
             \hspace{-1em}$x^{(t,h+1)}_c = x^{(t,h)}_c - \gamma \nabla F_c( x^{(t,h)}_c ; Z_c^{(t,h+1)})$
         \end{center}
       
-  \item Agrégation des modèles
+  \item Aggregate local models 
         
         
 \vspace{-0.6em}
@@ -286,21 +296,23 @@ Col4/.style= {Col1, fill=yellow!20},
       
   \end{minipage}~%
   \begin{minipage}{0.48\linewidth}
-  \pause
-       \begin{center}
+    \pause
+    \begin{center}
+      \small
+    With deterministic gradients:
     \includegraphics[width=0.75\linewidth]{images/local_training_heterogeneous.pdf}%
     \raisebox{2.5em}{ \includegraphics[width=0.25\linewidth]{images/legend.pdf} }
   \end{center}
   
-    \vspace{-0.5em}
+  %   \vspace{-0.5em}
 
-  ~~~~Plus d'itérations locales
+  % ~~~~Plus d'itérations locales
 
-    \vspace{0.5em}
+  %   \vspace{0.5em}
     
-    ~~~~~{\large \textcolor{green} \cmark}\, convergence plus rapide
+  %   ~~~~~{\large \textcolor{green} \cmark}\, convergence plus rapide
     
-    ~~~~~{\large \textcolor{red} \xmark}~ biais plus grand
+  %   ~~~~~{\large \textcolor{red} \xmark}~ biais plus grand
 
   \end{minipage}
 
@@ -309,31 +321,128 @@ Col4/.style= {Col1, fill=yellow!20},
 
 \end{frame}
 
+\begin{frame}{Classical analyses of this algorithm\\[-0.5em]
+    \small (For $L$-smooth, $\mu$-strongly convex functions)}
 
-\begin{frame}[t]{FedAvg avec gradients stochastiques converge !\footfullcite{mangold2025refined}}
+  Choose your favorite heterogeneity measure
+  \begin{itemize}
+  \item first-order\footfullcite{lian2017can}: $\zeta = \frac{1}{N} \sum_{c=1}^N \big\| \nabla f_c(x^{\star}) - \nabla f(x^{\star}) \big\|^2$
+  \item second-order\footfullcite{khaled2022faster}: $\zeta = \frac{1}{N} \sum_{c=1}^N \big\| \nabla_c^2 f(x^{\star}) - \nabla^2 f(x^{\star}) \big\|^2$
+  \item average drift\footfullcite{wang2024Unreasonable}: $\zeta = \big\| \frac{1}{NH} \sum_{c=1}^N \sum_{h=0}^{H-1} \nabla f(x_c^{(h)}) - \nabla f(x^{\star}) \big\|^2$
+  \end{itemize}
 
-{\small Si $f_c$ trois fois dérivable, $\mu$-fortement convexe, $\nabla f_c$ est $L$-Lipschitz, et $\gamma \le 1/L$}
+  \vspace{0.5em}
+
+  \pause
+
+  Show \textcolor{purple}{\bfseries convergence to a neighborhood} of $x^\star$
+  \begin{align*}
+    \| x^{(T)} - x^\star \|^2 \lesssim (1 - \gamma \mu)^{HT} \| x^{(0)} - x^\star \|^2
+    + \textcolor{purple}{\boldsymbol{\chi(\gamma, H, \zeta)}} ~~~~~\text{\small (for some function $\chi$)}
+  \end{align*}
+
+  \vspace{1em}
+
+  
+\end{frame}
+
+
+\begin{frame}[t]
+  \begin{center}
+    
+  \resizebox{0.9\linewidth}{!}{
+  \begin{tikzpicture}
+    \draw [-to,very thick](0,0) -- (12.5,0);
+    \node at (1.5,0.2) {$H=2$};
+    \node at (6,0.2) {$H=10$};
+    \node at (10.5,0.2) {$H=50$};
+  \end{tikzpicture}
+}
+\vspace{-0.5em}
+
+\only<1>{
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_False_2_t1000_s0.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_False_10_t1000_s0.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_False_50_t1000_s0.pdf}
+}%
+\only<2,3>{
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_True_2_t1000_s0.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_True_10_t1000_s0.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_True_50_t1000_s0.pdf}
+}%
+\only<4>{
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_True_2_t1000_s1.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_True_10_t1000_s1.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_True_50_t1000_s1.pdf}
+}
+
+  \end{center}
+
+  \begin{center}
+    When the number of local iterations increases, bias incrases
+
+    \pause
+    
+    ... but the bound is oblivious to problem's geometry
+    
+
+  \pause
+  
+  \textcolor{purple}{\bfseries Remark:} It seems that iterates converge in some way?
+  \end{center}
+  
+\end{frame}
+
+
+
+
+\begin{frame}[t]{FedAvg (with stochastic gradients) converges!\footfullcite{mangold2025refined}\\[-0.5em]
+      \small (For thrice derivable, $L$-smooth, $\mu$-strongly convex functions)}
+    
 \begin{itemize}[leftmargin=*]
-    \item FedAvg converge en Wasserstein vers une distribution $\pi^{(\gamma, H)}$
-    \only<2>{
+    \item FedAvg converges to a stationary distribution $\pi^{(\gamma, H)}$
+    \only<1>{
     \begin{itemize}
-        \item et si $x^{(t)} \sim \psi_{x^{(t)}}$,
+        \item denoting $x^{(t)} \sim \psi_{x^{(t)}}$, we have
     \begin{align*}
         \mathcal{W}_2(\psi_{x^{(t)}}; \pi^{(\gamma, H)})
         \le
         (1 - \gamma \mu)^{H t} \mathcal{W}_2(\psi_{x^{(0)}}; \pi^{(\gamma, H)})
     \end{align*}
-    \item où $\mathcal{W}_2$ est la distance de Wasserstein d'ordre 2
+    \item where $\mathcal{W}_2$ is the second order Wasserstein distance
     \end{itemize}
     }
 
 \pause
 
+    \item FedAvg's iterates covariance is
+    \only<2,3>{
+    \begin{align*}
+    \int (x - x^\star)(x - x^\star)^\top \pi^{(\gamma, H)}(\mathrm{d} x)
+    &  =
+    \tikz[remember picture,baseline=(variance.base)] \node[pinkblock] (variance) at (0,0) {
+    \textnormal{$\displaystyle \frac{\gamma}{N} C(x^\star) $}}; + O(\gamma^{3/2} H)
+    \end{align*}
+    }
+
+\only<3>{
+\begin{tikzpicture}[overlay,remember picture]
+    \node[pinkblock] (variancelegend) at (5,4) {\shortstack{\underline{Linear speed-up !} \\[0.5em]
+    variance decreases in $1/N$ \\
+    variance scales in $\gamma$
+    }};
+    \draw[color=amethyst] (variance) -- (variancelegend);
+\end{tikzpicture}
+
+\vspace{-4em}
+}
+\pause
+
 \pause
 
 
-    \item Biais  de FedAvg (pour $\gamma, H$ petits) 
-    \only<3,4>{
+    \item We can now give an \textcolor{purple}{\bfseries exact expansion of the bias}
+    \only<4,5>{
     \begin{align*}
     \int x \pi^{(\gamma, H)}(\mathrm{d} x)
     &  = x^\star +
@@ -350,22 +459,22 @@ Col4/.style= {Col1, fill=yellow!20},
     \frac{\gamma}{2 N} \nabla^2 f(x^\star)^{-1}
     \nabla^3 f(x^\star) A^{-1} C(x^\star)
     $}};
-    + O(\gamma^2 H^2)
+    + O(\gamma^{3/2} H)
     \end{align*}
     }
 \pause
 
-\only<3,4>{
+\only<4,5>{
 \begin{tikzpicture}[overlay,remember picture]
-    \node[blueblock] (heterbiaslegend) at (3,6) {\shortstack{\underline{Biais d'hétérogénéité} \\[0.5em]
-     Disparaît quand $\nabla^2 f_c(x^\star) = \nabla^2 f(x^\star)$ \\
-    \quad ou quand $\nabla f_c(x^\star) = \nabla f(x^\star)$
+    \node[blueblock] (heterbiaslegend) at (3,6) {\shortstack{\underline{Heterogeneity bias} \\[0.5em]
+     vanishes when $\nabla^2 f_c(x^\star) = \nabla^2 f(x^\star)$ \\
+    \quad or when $\nabla f_c(x^\star) = \nabla f(x^\star)$
     }};
     \draw[color=amethyst] (heterbias) -- (heterbiaslegend);
     
-    \node[pinkblock] (stobiaslegend) at (10.5,6) {\shortstack{\underline{Biais de stochasticité} \\[0.5em]
-    $A$ est un opérateur linéaire \\
-    $C(x^\star)$ est la covariance de $\nabla f$ en $x^\star$
+    \node[pinkblock] (stobiaslegend) at (10.5,6) {\shortstack{\underline{Stochasticity bias} \\[0.5em]
+    $A$ is some linear operator \\
+    $C(x^\star)$ is $\nabla f$'s covariance at $x^\star$
     }};
     \draw[color=amaranth] (stobias) -- (stobiaslegend);
 \end{tikzpicture}
@@ -373,37 +482,24 @@ Col4/.style= {Col1, fill=yellow!20},
 \vspace{-4em}
 }
 
-\pause
-
-    \item Variance  de FedAvg (pour $\gamma, H$ petits) 
-    \only<5,6>{
-    \begin{align*}
-    \int (x - x^\star)(x - x^\star)^\top \pi^{(\gamma, H)}(\mathrm{d} x)
-    &  =
-    \tikz[remember picture,baseline=(variance.base)] \node[pinkblock] (variance) at (0,0) {
-    \textnormal{$\displaystyle \frac{\gamma}{N} C(x^\star) $}}; + O(\gamma^2 H^2)
-    \end{align*}
-    }
-\pause
-
-\only<5,6>{
-\begin{tikzpicture}[overlay,remember picture]
-    \node[pinkblock] (variancelegend) at (5,4) {\shortstack{\underline{Linear speed-up !} \\[0.5em]
-    variance decreases in $1/N$ \\
-    variance scales in $\gamma$
-    }};
-    \draw[color=amethyst] (variance) -- (variancelegend);
-\end{tikzpicture}
-
-\vspace{-4em}
-}
-
 \end{itemize}
+
+\vspace{4em}
 
 \end{frame}
 
 
-\begin{frame}[t]{Scaffold ~~~ \raisebox{0.2em}{\textcolor{black}{\normalsize $x^\star \in \arg\min_{x \in \mathbb{R}^d} 
+
+\begin{frame}
+  \begin{center}
+    \huge \textcolor{purple}{
+      II. Correcting heterogeneity: Scaffold
+      }
+  \end{center}
+\end{frame}
+
+
+\begin{frame}[t]{Scaffold\footfullcite{karimireddy2020scaffold} ~~~ \raisebox{0.2em}{\textcolor{black}{\normalsize $x^\star \in \arg\min_{x \in \mathbb{R}^d} 
     \frac{1}{N} \sum_{c=1}^N \mathbb{E}_Z[ F_c(x; Z) ]$}} ~~}  
     
     \vspace{-1em}
@@ -411,27 +507,27 @@ Col4/.style= {Col1, fill=yellow!20},
   \begin{minipage}{0.5\linewidth}
 
   \footnotesize
-  À chaque itération globale :
+  At each global iteration
 
     \begin{itemize}[leftmargin=*,itemsep=0em]
   \footnotesize
-    \item Pour $c=1$ à $N$ en parallèle
+    \item For $c=1$ to $N$ in parallel
 
 \vspace{-0.2em}
     
     
 \begin{itemize}[leftmargin=*,itemsep=0em]
-\item Recevoir $x^{(t)}$, initialiser $x^{(t,0)}_c = x^{(t)}$
+\item Receive $x^{(t)}$, set $x^{(t,0)}_c = x^{(t)}$
     
-        \item Pour $h=0$ à $H-1$
+        \item For $h=0$ to $H-1$
     \end{itemize}
 
 \vspace{-0.6em}
 \begin{center}
-            \hspace{-1em}$x^{(t,h+1)}_c = x^{(t,h)}_c - \gamma \big( \nabla F_c( x^{(t,h)}_c ; Z_c^{(t,h+1)}) + \xi_c^{(t)} \big)$
+            \hspace{-1em}$x^{(t,h+1)}_c = x^{(t,h)}_c - \gamma \big( \nabla F_c( x^{(t,h)}_c ; Z_c^{(t,h+1)}) + \textcolor{purple}{\boldsymbol{\xi_c^{(t)}}} \big)$
         \end{center}
       
-  \item Agrégation des modèles
+  \item Aggregate models, update control variates
         
         
 \vspace{-0.6em}
@@ -439,18 +535,18 @@ Col4/.style= {Col1, fill=yellow!20},
             \hspace{-1em}$x^{(t+1)} = \frac{1}{N} \sum_{c=1}^N x_c^{(t,H)}$
           \end{center}
 \begin{center}
-            \hspace{-1em}$\xi_c^{(t+1)} = \xi_c^{(t)} + \frac{1}{\gamma H} (\theta_c^{t,H} - \theta^{(t+1)} )$
+            \hspace{-1em}$\textcolor{purple}{\boldsymbol{\xi_c^{(t+1)} = \xi_c^{(t)} + \frac{1}{\gamma H} (\theta_c^{t,H} - \theta^{(t+1)} )}}$
           \end{center}
 
           
       
     \end{itemize}
       
-  \end{minipage}~%
+  \end{minipage}~~~~~~%
   \begin{minipage}{0.48\linewidth}
   \pause
        \begin{center}
-    \includegraphics[width=0.75\linewidth]{images/local_training_heterogeneous.pdf}%
+    \includegraphics[width=0.75\linewidth]{images/local_training_homogeneous.pdf}%
     \raisebox{2.5em}{ \includegraphics[width=0.25\linewidth]{images/legend.pdf} }
   \end{center}
   
@@ -468,105 +564,178 @@ Col4/.style= {Col1, fill=yellow!20},
 
 
 
-\begin{frame}[t]{Scaffold also converges !\footfullcite{mangold2025refined}}
+\begin{frame}[t]{Scaffold also converges !\footfullcite{mangold2025scaffold}\\[-0.5em]
+  \small (For $L$-smooth, $\mu$-strongly convex functions with $\nabla^3 f(x)$ bounded by $Q$)}
 
-{\small Si $f_c$ trois fois dérivable, $\mu$-fortement convexe, $\nabla f_c$ est $L$-Lipschitz, et $\gamma \le 1/L$}
+
 \begin{itemize}[leftmargin=*]
-    \item Scaffold converges if $\gamma H L \le 1$ en Wasserstein vers une distribution $\pi^{(\gamma, H)}$
-    \only<2>{
+    \item Scaffold converges if $\gamma H L \le 1$, towards a distribution $\pi^{(\gamma, H)}$
+    \only<1>{
     \begin{itemize}
-        \item et si $x^{(t)} \sim \psi_{x^{(t)}}$,
+        \item denoting $x^{(t)} \sim \psi_{x^{(t)}}$, we have
     \begin{align*}
         \mathcal{W}_2(\psi_{x^{(t)}}; \pi^{(\gamma, H)})
         \le
         (1 - \gamma \mu)^{H t} \mathcal{W}_2(\psi_{x^{(0)}}; \pi^{(\gamma, H)})
     \end{align*}
-    \item où $\mathcal{W}_2$ est la distance de Wasserstein d'ordre 2
+    \item where $\mathcal{W}_2$ is the second order Wasserstein distance
     \end{itemize}
     }
 
-\pause
-
-\pause
-
-
-    \item Biais  de Scaffold (pour $\gamma, H$ petits) 
-    \only<3,4>{
-    \begin{align*}
-    \int x \pi^{(\gamma, H)}(\mathrm{d} x)
-    &  = x^\star
-    -  \tikz[remember picture,baseline=(stobias.base)] \node[pinkblock] (stobias) at (0,0) {
-    \textnormal{$\displaystyle
-    \frac{\gamma}{2 N} \nabla^2 f(x^\star)^{-1}
-    \nabla^3 f(x^\star) A^{-1} C(x^\star)
-    $}};
-    + O(\gamma^2 H^2)
-    \end{align*}
+    \pause
+    
+  \item Scaffold's variance is close to FedAvg's variance
+    \only<2,3>{
+      \begin{align*}
+        \int (x - x^\star)(x - x^\star)^\top \pi^{(\gamma, H)}(\mathrm{d} x)
+        &  =
+          \tikz[remember picture,baseline=(variance.base)] \node[pinkblock] (variance) at (0,0) {
+          \textnormal{$\displaystyle \frac{\gamma}{N} C(x^\star) $}}; + O(\gamma^{3/2})
+      \end{align*}
     }
-\pause
-
-\only<3,4>{
-\begin{tikzpicture}[overlay,remember picture]    
-    \node[pinkblock] (stobiaslegend) at (10.5,6) {\shortstack{\underline{Biais de stochasticité} \\[0.5em]
-    $A$ est un opérateur linéaire \\
-    $C(x^\star)$ est la covariance de $\nabla f$ en $x^\star$
-    }};
-    \draw[color=amaranth] (stobias) -- (stobiaslegend);
-\end{tikzpicture}
-
-\vspace{-4em}
-}
-
-\pause
-
-    \item Variance  de FedAvg (pour $\gamma, H$ petits) 
-    \only<5,6>{
-    \begin{align*}
-    \int (x - x^\star)(x - x^\star)^\top \pi^{(\gamma, H)}(\mathrm{d} x)
-    &  =
-    \tikz[remember picture,baseline=(variance.base)] \node[pinkblock] (variance) at (0,0) {
-    \textnormal{$\displaystyle \frac{\gamma}{N} C(x^\star) $}}; + O(\gamma^2 H^2)
-    \end{align*}
+    \pause
+    
+    \only<3>{
+      \begin{tikzpicture}[overlay,remember picture]
+        \node[pinkblock] (variancelegend) at (5,4) {\shortstack{\underline{Linear speed-up !} \\[0.5em]
+            variance decreases in $1/N$ \\
+            variance scales in $\gamma$
+          }};
+        \draw[color=amethyst] (variance) -- (variancelegend);
+      \end{tikzpicture}
+      
+      \vspace{-4em}
     }
+
+    \pause
+
+  \item Scaffold still has some bias
+    \only<4,5>{
+      \begin{align*}
+        \int x \pi^{(\gamma, H)}(\mathrm{d} x)
+        &  = x^\star
+          -  \tikz[remember picture,baseline=(stobias.base)] \node[pinkblock] (stobias) at (0,0) {
+          \textnormal{$\displaystyle
+          \frac{\gamma}{2 N} \nabla^2 f(x^\star)^{-1}
+          \nabla^3 f(x^\star) A^{-1} C(x^\star)
+          $}};
+          + O(\gamma^{3/2})
+      \end{align*}
+    }
+
+    \only<5>{
+      \begin{tikzpicture}[overlay,remember picture]    
+        \node[pinkblock] (stobiaslegend) at (10.5,4) {\shortstack{\underline{Stochasticity bias remains!} \\[0.5em]
+            $A$ is some linear operator \\
+            $C(x^\star)$ is $\nabla f$'s covariance at $x^\star$
+          }};
+        \draw[color=amaranth] (stobias) -- (stobiaslegend);
+      \end{tikzpicture}
+
+      \vspace{-4em}
+    }
+
 \pause
-
-\only<5,6>{
-\begin{tikzpicture}[overlay,remember picture]
-    \node[pinkblock] (variancelegend) at (5,4) {\shortstack{\underline{Linear speed-up !} \\[0.5em]
-    variance decreases in $1/N$ \\
-    variance scales in $\gamma$
-    }};
-    \draw[color=amethyst] (variance) -- (variancelegend);
-\end{tikzpicture}
-
-\vspace{-4em}
-}
 
 \end{itemize}
 
 \end{frame}
+\begin{frame}[t]
+  \begin{center}
+    
+  \resizebox{0.9\linewidth}{!}{
+  \begin{tikzpicture}
+    \draw [-to,very thick](0,0) -- (12.5,0);
+    \node at (1.5,0.2) {$H=10$};
+    \node at (6,0.2) {$H=20$};
+    \node at (10.5,0.2) {$H=50$};
+  \end{tikzpicture}
+}
+\vspace{-0.5em}
 
-\begin{frame}{New Convergence Rate for Scaffold}
+\only<1>{
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_scaffold_True_2_t1000_s0.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_scaffold_True_10_t1000_s0.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_scaffold_True_50_t1000_s0.pdf}
+}%
+\only<2>{
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_scaffold_True_2_t1000_s1.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_scaffold_True_10_t1000_s1.pdf}
+  \includegraphics[width=0.3\linewidth]{images/plots/fedavg_scaffold_True_50_t1000_s1.pdf}
+}
+
+  \end{center}
+
+  \begin{center}
+    Scaffold converges to the right point
 
 
-  
+    ... and its variance is similar to FedAvg!
+  \end{center}
+
+
+\end{frame}
+
+
+\begin{frame}{New Convergence Rate for Scaffold\\[-0.5em]
+    \small (For $L$-smooth, $\mu$-strongly convex functions with $\nabla^3 f(x)$ bounded by $Q$)}
+\begin{align*}
+\mathbb{E}\left[ \| x^{(T)} - x^\star \|^2 \right] 
+& \lesssim{} \left( 1 - \frac{\gamma \mu}{4} \right)^{HT}
+\left\{ 
+\| x^{(0)} - x^\star \|^2
++
+2\gamma^2 H^2 \zeta^2
++
+\frac{ \sigma_\star^2 }{L\mu}
+\right\}
+\\ &  \quad\quad\quad\quad\quad\quad\quad
++ 
+\frac{\gamma }{\textcolor{purple}{\boldsymbol{N}} \mu} \sigma_\star^2 
++ \frac{ \gamma^{3/2} Q }{\mu^{5/2}} \sigma_\star^3
++ \frac{ \gamma^3 H Q^2}{\mu^3} \sigma_\star^4
+\end{align*}
+
+
+where
+\begin{itemize}
+\item \small
+  $\sigma_\star^2 = \mathbb{E}[ \frac{1}{N} \sum_{c=1}^N \| \nabla F_c^Z(x^\star) - \nabla f_c(x^\star) \|^2$ is the variance at $x^\star$
+\item \small
+  $\zeta^2 = \frac{1}{N} \sum_{c=1}^N \| \nabla f_c^Z(x^\star) \|^2$ measures gradient heterogeneity
+\end{itemize}
+
+
+
 \end{frame}
 
 \begin{frame}{Linear Speed-Up!}
 
-
-  
-\end{frame}
-
-\begin{frame}{Numerical Illustrations}
-
-
+  As long as $N$ is not too large, one can obtain $\mathbb{E}\left[ \| x^{(T)} - x^\star \|^2 \right] \le \epsilon^2 $ with
+  \begin{align*}
+    \# \text{grad per client}
+    = \widetilde O\Big( \frac{\sigma_\star^2}{\textcolor{purple}{\boldsymbol{N}} \mu^2 \epsilon^2} 
+    \log\left( 
+    \frac{1}{\epsilon}
+    \right) \Big)
+  \end{align*}
   
 \end{frame}
 
 \begin{frame}{Conclusion}
 
+  \begin{itemize}[itemsep=1em]
+  \item FedAvg and Scaffold converge (even with stochastic gradients)
+  \item This allows to derive new analyses for these problems,
 
+    with exact first-order expression for bias
+  \item And we proved that Scaffold has:
+    \begin{itemize}
+    \item variance similar to FedAvg's variance
+    \item \textit{linear speed-up} in the number of clients!!
+    \end{itemize}
+
+  \end{itemize}
   
 \end{frame}
 
