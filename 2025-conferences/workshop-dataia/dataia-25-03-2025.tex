@@ -175,8 +175,8 @@ Col4/.style= {Col1, fill=yellow!20},
 %Projet de Recherche : 
 \vspace{0em}}
 \author{
-  Paul Mangold\\[0.5em]
-  Workshop Fondation Mathématiques de l'IA
+  Paul Mangold (CMAP, École polytechnique) \\[0.5em]
+  Workshop ``Fondements Mathématiques de l'IA''
 }
 \titlegraphic{
 }
@@ -348,6 +348,8 @@ Col4/.style= {Col1, fill=yellow!20},
 
 
 \begin{frame}[t]
+
+  \vspace{1em} 
   \begin{center}
     
   \resizebox{0.9\linewidth}{!}{
@@ -376,7 +378,13 @@ Col4/.style= {Col1, fill=yellow!20},
   \includegraphics[width=0.3\linewidth]{images/plots/fedavg_True_50_t1000_s1.pdf}
 }
 
+\vspace{-3em}
+
+\includegraphics[width=0.8\linewidth]{images/legend_fedavg.pdf}    
+    
   \end{center}
+
+  \vspace{-3em}
 
   \begin{center}
     When the number of local iterations increases, bias incrases
@@ -473,8 +481,8 @@ Col4/.style= {Col1, fill=yellow!20},
     \draw[color=amethyst] (heterbias) -- (heterbiaslegend);
     
     \node[pinkblock] (stobiaslegend) at (10.5,6) {\shortstack{\underline{Stochasticity bias} \\[0.5em]
-    $A$ is some linear operator \\
-    $C(x^\star)$ is $\nabla f$'s covariance at $x^\star$
+    $A = I \otimes \nabla^2 f(x^\star) + \nabla^2 f(x^\star) \otimes I $ \\
+    $C(x^\star)$ is $\nabla F^Z$'s covariance at $x^\star$
     }};
     \draw[color=amaranth] (stobias) -- (stobiaslegend);
 \end{tikzpicture}
@@ -626,8 +634,8 @@ Col4/.style= {Col1, fill=yellow!20},
     \only<5>{
       \begin{tikzpicture}[overlay,remember picture]    
         \node[pinkblock] (stobiaslegend) at (10.5,4) {\shortstack{\underline{Stochasticity bias remains!} \\[0.5em]
-            $A$ is some linear operator \\
-            $C(x^\star)$ is $\nabla f$'s covariance at $x^\star$
+            $A = I \otimes \nabla^2 f(x^\star) + \nabla^2 f(x^\star) \otimes I $ \\
+            $C(x^\star)$ is $\nabla F^Z$'s covariance at $x^\star$
           }};
         \draw[color=amaranth] (stobias) -- (stobiaslegend);
       \end{tikzpicture}
@@ -641,6 +649,9 @@ Col4/.style= {Col1, fill=yellow!20},
 
 \end{frame}
 \begin{frame}[t]
+
+  \vspace{1em}
+  
   \begin{center}
     
   \resizebox{0.9\linewidth}{!}{
@@ -664,8 +675,14 @@ Col4/.style= {Col1, fill=yellow!20},
   \includegraphics[width=0.3\linewidth]{images/plots/fedavg_scaffold_True_50_t1000_s1.pdf}
 }
 
-  \end{center}
 
+\vspace{-3em}
+
+\includegraphics[width=\linewidth]{images/legend_fedavg_scaffold.pdf}    
+
+\end{center}
+
+  \vspace{-3em}
   \begin{center}
     Scaffold converges to the right point
 
@@ -737,6 +754,30 @@ where
 
   \end{itemize}
   
+\end{frame}
+
+
+
+\begin{frame}
+  \begin{center}
+    \huge \textcolor{purple}{
+      Thank you!
+      }
+    \end{center}
+
+    Check the papers:
+    \vspace{-1em}
+    \begin{itemize}
+    \item \small \fullcite{mangold2025refined}
+    \item \small \fullcite{mangold2025scaffold}
+    \end{itemize}
+
+    Find this presentation on my website:
+    \vspace{-1em}
+    \begin{itemize}
+    \item \textcolor{amaranth}{\url{https://pmangold.fr/research.php?page=talks}}
+    \end{itemize}
+    
 \end{frame}
 
 
