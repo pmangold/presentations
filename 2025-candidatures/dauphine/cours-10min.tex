@@ -1,0 +1,322 @@
+\documentclass[aspectratio=169,12pt]{beamer}
+
+\usepackage{hyperref}
+\usepackage[giveninits=true,doi=false,isbn=false,url=false,eprint=false]{biblatex}
+
+
+
+\renewbibmacro*{booktitle}{%
+  \textbf{\printfield[booktitle]{booktitle}}%
+}
+
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\usepackage{tcolorbox}
+
+\addbibresource{references.bib}
+\addbibresource{publications_oral.bib}
+
+\usepackage{varwidth}
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+
+
+
+\tikzset{
+    blueblock/.style = {draw=amethyst,thick,fill=amethyst!15,rounded corners=0pt,inner sep=7pt}
+}
+\tikzset{
+    pinkblock/.style = {draw=amaranth,thick,fill=amaranth!15,rounded corners=0pt,inner sep=7pt}
+}
+
+\tikzset{
+    widepinkblock/.style = {draw=amaranth,thick,fill=amaranth!15,rounded corners=0pt,inner sep=20pt}
+}
+
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+\definecolor{darkspringgreen}{rgb}{0.09, 0.45, 0.27}
+\definecolor{amaranth}{rgb}{0.9, 0.17, 0.31}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.95}
+
+\usepackage{enumitem}
+
+% Labels for items in (nested) itemize (uses bullets/characters)
+\newcommand\labelitemi{\textcolor{amaranth}{\textbullet}}% bullet
+\newcommand\labelitemii{\textcolor{amaranth}{\normalsize\normalfont\bfseries \textendash}}% --
+\newcommand\labelitemiii{\textcolor{amaranth}{\textasteriskcentered}}% *
+\newcommand\labelitemiv{\textcolor{amaranth}{\textperiodcentered}}% .
+\setlist[enumerate,1]{label={\textcolor{amaranth}{\arabic*.}}}
+
+
+% footnote size
+\makeatletter
+\newcommand\notsotiny{\@setfontsize\notsotiny\@vipt\@viipt}
+\makeatother
+
+\setbeamerfont{footnote}{size=\notsotiny}
+
+
+\makeatletter
+\newcommand{\Pause}[1][]{\unless\ifmeasuring@\relax
+\pause[#1]%
+\fi}
+\makeatother
+%%%%%% Template things
+
+% space between paragraphs
+\parskip=1em
+
+% title font
+\setbeamerfont{title}{size=\LARGE}%, series=\bfseries}
+\setbeamerfont{frametitle}{size=\LARGE}%, series=\bfseries}
+\setbeamerfont{institute}{size=\normalsize}%, series=\bfseries}
+
+% spacing between frame title and content
+\addtobeamertemplate{frametitle}{\vspace*{0.2cm}}{\vspace*{0.5cm}\setcounter{footnote}{0}}
+
+% color
+\definecolor{beamer@blendedblue}{rgb}{0.8, 0, 0.34}%{0.44, 0.16, 0.39}
+
+% no navigation
+\beamertemplatenavigationsymbolsempty
+
+% slide numbers
+\setbeamertemplate{footline}
+{
+  \hbox{\begin{beamercolorbox}[wd=1\paperwidth,ht=5.25ex,dp=4ex,right]{framenumber}%
+      \large \insertframenumber{}~~
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% slide numbers
+\def\setupappendix{
+\setcounter{framenumber}{0}
+\setbeamertemplate{footline}
+{
+  \hbox{\begin{beamercolorbox}[wd=1\paperwidth,ht=5.25ex,dp=4ex,right]{framenumber}%
+      \large A-\insertframenumber{}~~
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+}
+
+
+% centered titles
+\makeatletter
+\long\def\beamer@@frametitle[#1]#2{%
+  \beamer@ifempty{#2}{}{%
+    \gdef\insertframetitle{\centering{#2\ifnum\beamer@autobreakcount>0\relax{}\space\usebeamertemplate*{frametitle continuation}\fi}}%
+  \gdef\beamer@frametitle{#2}%
+  \gdef\beamer@shortframetitle{#1}%
+}%
+}
+\makeatother
+
+%%%%% Equations
+
+\newcounter{mytn}
+\makeatletter
+\newcommand{\tmn}[3][]{\stepcounter{mytn}%
+\tikzmarknode[Col\the\numexpr\value{mytn}-\mytn@start\relax/.try,inner xsep=2pt,%
+minimum height=1.6em,inner sep=2mm,#1]{mytn-\number\value{mytn}}{#2}%
+\expandafter\gdef\csname tmn@annot@\number\value{mytn}\endcsname{#3}}
+\newenvironment{AnnotatedEquation}{\edef\mytn@start{\number\value{mytn}}%
+\begin{equation*}}{\end{equation*}%
+\edef\mytn@end{\number\value{mytn}}%
+\ifnum\mytn@end>\mytn@start
+\begin{itemize}
+ \foreach \X in {\the\numexpr\mytn@start+1,...,\mytn@end}
+ {\item \tikzmarknode{mytn-annot-\X}{\csname tmn@annot@\X\endcsname}%
+   \begin{tikzpicture}[overlay,remember picture]
+  \draw[-stealth] (mytn-annot-\X.east) to[out=0,in=-90] (mytn-\X.south);
+ \end{tikzpicture}}
+\end{itemize}
+\fi}
+\makeatother
+\tikzset{ Col1/.style= {fill=blue!20,anchor=base,rounded corners=2pt},
+Col2/.style= {Col1, fill=red!20},
+Col3/.style= {Col1, fill=green!20},
+Col4/.style= {Col1, fill=yellow!20},
+}
+
+% footnotes at end of frame rather than minipage
+
+\makeatletter
+\renewrobustcmd{\blx@mkbibfootnote}[2]{%
+  \iftoggle{blx@footnote}
+    {\blx@warning{Nested notes}%
+     \addspace\mkbibparens{#2}}
+    {\unspace
+     \ifnum\blx@notetype=\tw@
+       \expandafter\@firstoftwo
+     \else
+       \expandafter\@secondoftwo
+     \fi
+       {\csuse{blx@theendnote#1}{\protecting{\blxmkbibnote{end}{#2}}}}
+       {\csuse{footnote}[frame]{\protecting{\blxmkbibnote{foot}{#2}}}}}}
+\makeatother
+
+%%%%% INFORMATION
+
+\title{\LARGE Régression Logistique \\[0.5em]
+\large Mini-Cours
+\vspace{0em}}
+\author{
+  Paul Mangold \\[0.5em]
+  Audition pour le poste de Maître de Conférences à l'Université Dauphine-PSL
+}
+\titlegraphic{
+}
+\institute{}
+\date{16 mai 2025}
+
+
+%%%%% DOCUMENT
+
+\begin{document}
+
+%% TITLE PAGE
+
+\begin{frame}[plain]
+  \vspace{3.5em}
+  \titlepage
+\end{frame}
+\addtocounter{framenumber}{-1}
+
+
+
+% -------------------------
+\begin{frame}{Pourquoi la régression logistique ?}
+\begin{itemize}
+  \item Objectif : Prédire une variable binaire (0 ou 1), ex : malade ou non, succès ou échec.
+  \item Contrairement à la régression linéaire, la régression logistique :
+  \begin{itemize}
+    \item Modélise une probabilité.
+    \item Contraint la sortie à $[0,1]$.
+  \end{itemize}
+  \item Utilisée massivement en médecine, épidémiologie, sciences sociales.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Formulation du modèle}
+On modélise la probabilité que $Y = 1$ par :
+\[
+P(Y = 1 \mid X) = \sigma(w^T X) = \frac{1}{1 + e^{-w^T X}}
+\]
+où :
+\begin{itemize}
+  \item $\sigma$ est la fonction sigmoïde,
+  \item $w$ est le vecteur de paramètres,
+  \item $X$ est le vecteur de variables explicatives.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Qu’est-ce qu’un \textit{odds ratio} ?}
+\begin{itemize}
+  \item Définition des \textbf{odds} : 
+  \[
+  \text{odds} = \frac{P(Y=1 \mid X)}{P(Y=0 \mid X)} = \frac{p}{1-p}
+  \]
+  \item On a alors :
+  \[
+  \log\left(\frac{p}{1-p}\right) = w^T X
+  \]
+  \item L’odds ratio (OR) entre deux groupes $X$ et $X'$ vaut :
+  \[
+  \text{OR} = \exp(w^T (X - X'))
+  \]
+\end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Importance des odds ratios en recherche médicale}
+\begin{itemize}
+  \item Interprétation simple : OR > 1 $\Rightarrow$ le facteur augmente le risque.
+  \item Exemple :
+  \begin{itemize}
+    \item OR = 3.2 pour un certain médicament $\Rightarrow$ 3.2 fois plus de chances de succès.
+  \end{itemize}
+  \item Donne un outil quantitatif pour identifier des facteurs de risque.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Extension au multi-classe : le softmax}
+Pour $K$ classes :
+\[
+P(Y = k \mid X) = \frac{e^{w_k^T X}}{\sum_{j=1}^K e^{w_j^T X}}
+\]
+\begin{itemize}
+  \item Chaque classe $k$ a un vecteur $w_k$.
+  \item Cette fonction s’appelle \textbf{softmax}.
+  \item Utilisé pour généraliser la régression logistique à la classification multi-classes.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{La fonction de perte logistique}
+Pour un seul échantillon $(x_i, y_i)$ :
+\[
+\ell(w; x_i, y_i) = -\left[ y_i \log \hat{p}_i + (1 - y_i) \log (1 - \hat{p}_i) \right]
+\]
+où $\hat{p}_i = \sigma(w^T x_i)$
+
+\begin{itemize}
+  \item Cette fonction pénalise fortement les erreurs de prédiction.
+  \item Convexe et différentiable : propice à l’optimisation par descente de gradient.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Dérivation via maximum de vraisemblance}
+On suppose que :
+\[
+P(y_i \mid x_i; w) = \sigma(w^T x_i)^{y_i} (1 - \sigma(w^T x_i))^{1 - y_i}
+\]
+La vraisemblance totale est :
+\[
+L(w) = \prod_{i=1}^n P(y_i \mid x_i; w)
+\]
+On maximise le log :
+\[
+\log L(w) = \sum_{i=1}^n \left[ y_i \log \hat{p}_i + (1 - y_i) \log (1 - \hat{p}_i) \right]
+\]
+Donc la \textbf{perte logistique} est l’opposée du log-vraisemblance.
+\end{frame}
+
+% -------------------------
+\begin{frame}{Résumé}
+\begin{itemize}
+  \item La régression logistique modélise $P(Y = 1 \mid X)$ via une fonction sigmoïde.
+  \item L’odds ratio est une mesure clé pour l’interprétation des effets des variables.
+  \item Le softmax permet l’extension à plusieurs classes.
+  \item La fonction de perte logistique provient du maximum de vraisemblance.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+\begin{frame}{Questions ?}
+\centering
+\Huge Merci de votre attention !
+\end{frame}
+
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
