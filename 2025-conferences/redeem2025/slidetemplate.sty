@@ -1,0 +1,93 @@
+% mybeamer.sty
+\ProvidesPackage{coursetemplate}[2025/09/18 Custom Beamer style for class]
+
+\RequirePackage{xcolor}
+\RequirePackage{etoolbox} % for \ifdefined checks
+
+% Define amaranth color
+\definecolor{darkamaranth}{rgb}{0.5, 0.04, 0.1}
+\definecolor{amaranth}{rgb}{0.9, 0.17, 0.31}
+
+% Command to store course name
+\newcommand{\cours}[1]{\def\@cours{#1}}
+\newcommand{\conf}[1]{\def\@conf{#1}}
+
+% Default course name if not defined
+\providecommand{\@cours}{}
+\providecommand{\@conf}{}
+
+\AtBeginDocument{%
+    % Hide navigation symbols
+    \setbeamertemplate{navigation symbols}{}
+
+    % Only show slide number at bottom right
+    \setbeamertemplate{footline}{%
+      \hfill\LARGE\insertframenumber\hspace{0.3cm}\vspace{0.3cm}%
+    }
+
+    % Title color
+    \setbeamercolor{frametitle}{fg=amaranth}
+    
+    % Center frame titles
+    \setbeamertemplate{frametitle}{%
+      \vspace{1em}
+      \begin{centering}
+        \insertframetitle
+      \end{centering}
+    }
+
+    % Titlepage settings
+    \setbeamercolor{title}{fg=amaranth}
+    \setbeamercolor{subtitle}{fg=amaranth}
+    \setbeamercolor{conf}{fg=black}
+
+    % Redefine title page to include course name as subtitle
+    \AtBeginDocument{%
+    \setbeamertemplate{title page}{%
+        \vbox{}
+        \vfill
+        {\usebeamercolor[fg]{title}\usebeamerfont{title}\inserttitle\par}
+        \vspace{0.5em}
+        \hrule
+        \vspace{0.5em}
+        {\usebeamercolor[fg]{author}\usebeamerfont{author}\insertauthor\par}
+        \vspace{-0.3em}
+        {\usebeamercolor[fg]{conf}\usebeamerfont{conf}\@conf\par}
+        \vfill
+    }
+}
+    % Make bullet points amaranth
+    \setbeamercolor{itemize item}{fg=amaranth}
+    \setbeamercolor{itemize subitem}{fg=amaranth}
+    \setbeamercolor{itemize subsubitem}{fg=amaranth}
+
+    % Make all text bigger
+    \setbeamerfont{frametitle}{size=\LARGE}
+    \setbeamerfont{normal text}{size=\Large}
+
+    
+    \setbeamerfont{title}{size=\LARGE} % make presentation title bigger
+    \setbeamerfont{subtitle}{size=\large} % course name
+    \setbeamerfont{conf}{size=\normalsize} % course name
+    \setbeamerfont{author}{size=\normalsize}
+    \setbeamerfont{date}{size=\normalsize}
+
+    % Custom bullet symbol
+    \setbeamertemplate{itemize items}{\textcolor{amaranth}{\textbullet}}
+    
+
+    % Make enumerate numbers bold and red
+    \setbeamerfont{enumerate item}{series=\bfseries} % bold
+    \setbeamercolor{enumerate item}{fg=amaranth}         % color
+
+    % biblio colors
+    \setbeamercolor{bibliography entry author}{fg=amaranth}
+    \setbeamercolor{bibliography entry title}{fg=black}
+    \setbeamercolor{bibliography entry location}{fg=amaranth}
+    \setbeamercolor{bibliography entry note}{fg=amaranth}
+    \setbeamercolor*{bibliography entry}{fg=amaranth}
+
+    
+    % Optional: reduce spacing
+    \setlength{\parskip}{1em}
+}
