@@ -1,0 +1,187 @@
+% mybeamer.sty
+\ProvidesPackage{coursetemplate}[2025/09/18 Custom Beamer style for class]
+
+
+\RequirePackage{tikz}
+\usetikzlibrary{positioning, shapes, arrows, arrows.meta, calc}
+
+
+
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{etoolbox} % for \ifdefined checks
+\RequirePackage{xargs}
+\RequirePackage{comment}
+\RequirePackage{bbm}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+
+% Define amaranth color
+\definecolor{darkamaranth}{rgb}{0.5, 0.04, 0.1}
+\definecolor{amaranth}{rgb}{0.9, 0.17, 0.31}
+\definecolor{blueish}{rgb}{0.2,0.4,0.7}
+\definecolor{greenish}{rgb}{0.2,0.6,0.3}
+
+
+% Command to store course name
+\newcommand{\cours}[1]{\def\@cours{#1}}
+
+% Default course name if not defined
+\providecommand{\@cours}{}
+
+\AtBeginDocument{%
+    % Hide navigation symbols
+    \setbeamertemplate{navigation symbols}{}
+
+    % Only show slide number at bottom right
+    \setbeamertemplate{footline}{%
+      \hfill\LARGE\insertframenumber\hspace{0.3cm}\vspace{0.3cm}%
+    }
+
+    % Title color
+    \setbeamercolor{frametitle}{fg=amaranth}
+    
+    % Center frame titles
+    \setbeamertemplate{frametitle}{%
+      \vspace{1em}
+      \begin{centering}
+        \insertframetitle
+      \end{centering}
+    }
+
+    % Titlepage settings
+    \setbeamercolor{title}{fg=darkamaranth}
+    \setbeamercolor{subtitle}{fg=amaranth}
+
+    % Redefine title page to include course name as subtitle
+    \AtBeginDocument{%
+    \setbeamertemplate{title page}{%
+        \vbox{}
+        \vfill
+        {\usebeamercolor[fg]{title}\usebeamerfont{title}\@cours\par}
+        \vspace{-0.3em}
+        {\usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\inserttitle\par}
+        \vspace{0.5em}
+        \hrule
+        \vspace{0.5em}
+        {\usebeamercolor[fg]{author}\usebeamerfont{author}\insertauthor\par}
+        {\usebeamercolor[fg]{institute}\usebeamerfont{institute}\insertinstitute\par}
+        \vspace{0.5em}
+        {\usebeamercolor[fg]{date}\usebeamerfont{date}\insertdate\par}
+        \vfill
+    }
+}
+    % Make bullet points amaranth
+    \setbeamercolor{itemize item}{fg=amaranth}
+    \setbeamercolor{itemize subitem}{fg=amaranth}
+    \setbeamercolor{itemize subsubitem}{fg=amaranth}
+
+    % Make all text bigger
+    \setbeamerfont{frametitle}{size=\LARGE}
+    \setbeamerfont{normal text}{size=\Large}
+
+    
+    \setbeamerfont{title}{size=\normalsize} % make presentation title bigger
+    \setbeamerfont{subtitle}{size=\Large} % course name
+    \setbeamerfont{author}{size=\footnotesize}
+    \setbeamerfont{institute}{size=\footnotesize,series=\mdseries}
+    \setbeamerfont{date}{size=\footnotesize,series=\mdseries}
+
+    
+    
+    % Custom bullet symbol
+%    \setbeamertemplate{itemize items}{\textcolor{amaranth}{\textbullet}}
+
+    % sets color of the numbers/keeps the default numbering style
+    \setbeamercolor{enumerate item}{fg=amaranth}
+    \setbeamercolor{enumerate subitem}{fg=amaranth}    
+%    \setbeamertemplate{enumerate item}[default]  
+
+    % itemize/enumerate spacing
+%    \addtobeamertemplate{itemize/enumerate body begin}{\setlength{\itemsep}{0.8em}}{}
+
+    % equation spacing
+    \setlength{\abovedisplayskip}{1em}   % space above
+    \setlength{\belowdisplayskip}{1em}   % space below
+
+    % quotes spacing
+    \setlength{\topsep}{1em}      % space before list
+    \setlength{\partopsep}{0pt}   % extra space at paragraph start
+    \setlength{\parsep}{0pt}      % space between paragraphs inside quote
+    \setlength{\itemsep}{0pt}     % space between items (not needed for single quotes)
+
+
+    % Section titles in the table of contents, header/footer 
+    \setbeamercolor{section in toc}{fg=amaranth}    
+    \setbeamercolor{section in head/foot}{fg=green}
+
+    
+    % Optional: reduce spacing
+    \setlength{\parskip}{1em}
+}
+
+% course outline
+\AtBeginSection[]{
+  \begin{frame}{Outline}
+    \vspace{1em}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+
+% useful commands
+
+
+\newcommand{\concarrow}{\vspace{0.5em}\hspace{0.5em}\textcolor{amaranth}{$\boldsymbol{\Longrightarrow}$}\hspace{0.5em}\vspace{0.5em}}
+
+
+
+% quotes
+\newcommand{\chapquote}[1]{%
+  \vspace{1em}
+  \begin{center}
+    \textcolor{amaranth}{\textit{#1}}
+  \end{center}
+  \vspace{1em}
+}
+
+\newcommand{\chapquotename}[2]{%
+  \vspace{1em}
+  \begin{center}
+    \textcolor{amaranth}{\textit{#1}} \\[1em]
+    \small \raggedleft -- #2 \hspace{2em}
+  \end{center}
+  \vspace{1em}
+}
+
+% tikz stuff
+\tikzset{
+    process/.style={draw=amaranth!70, fill=amaranth!20, thick, rounded corners, minimum width=3cm, minimum height=1cm, align=center},
+    arrow/.style={->, thick, >=stealth}
+}
+
+
+% color
+\newcommand{\btca}[1]{\textcolor{amaranth}{\textbf{#1}}}
+\newcommand{\tca}[1]{\textcolor{amaranth}{#1}}
+
+
+\newcommand{\midframe}[1]{
+  \begin{frame}[plain]
+    \centering
+    \textcolor{amaranth}{\huge #1} % centered, large title
+  \end{frame}
+}
+
+
+
+% -------------------------------
+% Customize theorem style
+% -------------------------------
+
+\setbeamercolor{block title}{use=structure,bg=white,fg=amaranth}
+\setbeamercolor{block body}{use=structure,bg=white,fg=black}
+
+
+% footnote cite
+\setbeamerfont{footnote}{size=\tiny}   % or \scriptsize, \footnotesize, etc.

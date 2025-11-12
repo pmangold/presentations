@@ -177,7 +177,7 @@
     \vspace{1em}
     
     \only<3>{
-      find the best policy (according to value), for all $s \in \mathcal{S}$
+      find one of the best policy (according to value), for all $s \in \mathcal{S}$
       \begin{align*}
         \pi_\star(\cdot|s) \in \arg\max_{\pi} V^{\pi}(s)
       \end{align*}
@@ -288,7 +288,7 @@
       \gamma^t
       \sum_{s \in \mathcal{S}} \sum_{a \in \mathcal{A}}
       \mathbb{P}(S_t = s, A_t = a)
-      \mathbb{E}[R(S_{t},A_{t})]
+      R(s,a)
   \end{align*}
 
   Parameterize the policy $\pi_\theta$ by $\theta \in \mathbb{R}^{SA}$, and update
@@ -539,6 +539,8 @@ Theorem: this algorithm converges to a solution of
     \end{align}
   \end{itemize}
 
+  \pause
+
   \textbf{\textcolor{amaranth}{Problem: due to heterogeneity, $\boldsymbol{\frac{1}{N} \sum_{c=1}^N V^{c,\pi_\theta)}}$ does not satisfy \eqref{eq:mu-Lojasiewicz} }}
   
 \end{frame}
@@ -549,7 +551,7 @@ Theorem: this algorithm converges to a solution of
   \begin{align*}
     \frac{1}{N} \sum_{c=1}^N V^{(c,\star)} - \mathbb{E} V^{(c,\pi_t)}
     & \lesssim
-      \frac{ L }{\mu T} \frac{1}{N} \sum_{c=1}^N( V^{(c,\star)} -  V^{(c,\pi_{\theta_0})} )
+      \frac{ 1 }{\mu \eta T} \frac{1}{N} \sum_{c=1}^N( V^{(c,\star)} -  V^{(c,\pi_{\theta_0})} )
       + \frac{\eta^{1/2}}{\mu^{1/2} N^{1/2}}
       + \frac{\zeta^{1/2}}{\mu^{1/2}}
   \end{align*}
@@ -590,6 +592,7 @@ Theorem: this algorithm converges to a solution of
 \end{frame}
 
 \begin{frame}{Perspectives}
+  \large 
   
   Contrary to classical FL, there is no ``analogy with centralized'' \\
   $\rightarrow$ we necessarily pay heterogeneity somewhere...
@@ -600,7 +603,7 @@ Theorem: this algorithm converges to a solution of
   \item under heterogeneity... we should personalize!
   \end{itemize}
 
-  In fact, maybe it is the same in all federated learning :)
+  In fact, it is the same in federated and decentralized learning :)
 \end{frame}
 
 
